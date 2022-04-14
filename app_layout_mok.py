@@ -18,7 +18,7 @@ radioitems = html.Div(
         dbc.RadioItems(
             options=[
                 {"label": "Distritos", "value": 1},
-                {"label": "Subprefeituras", "value": 2},
+                {"label": "Subprefeituras", "value": 2, "disabled": True},
                 {"label": "Zonas OD", "value": 3, "disabled": True},
                 {"label": "CODLOGs", "value": 4, "disabled": True},
             ],
@@ -31,21 +31,26 @@ radioitems = html.Div(
 checklist = html.Div(
     [
         dbc.Label("Selecione as totalizações, índices ou Quantitativos"),
-        dbc.Checklist(
+        dbc.RadioItems(
             options=[
-                {"label": "Quantidade de Unidades", "value": 1, "disabled": True},
-                {"label": "Quantidade de Unidades Condominiais", "value": 2},
-                {"label": "Tamanho Médio da Unidade Condominial"},
-                {"label": "Total de área dos terrenos/lotes", "value": 3, "disabled": False},
-                {"label": "Total de Área Ocupada"},
-                {"label": "Total de Área Construída"},
-                {"label": "Valor Total dos Terrenos"},
-                {"label": "Valor Total das Construções"},
-                {"label": "CA (Coeficiente de Aproveitamento"},
-                {"label": "TO (Taxa de Ocupação)"},
-                {"label": "Tamanho Médio da Testada"},
-                {"label": "Número médio de Pavimentos"},
-                {"label": "Fator de obsolecência médio"}
+                {"label": "Quantidade de Unidades", "value": "Quantidade de Unidades", "disabled": False},
+                {"label": "Quantidade de Unidades Condominiais", "value": "Quantidade de Unidades Condominiais"},
+                {"label": "Tamanho Médio da Unidade Condominial", "value": "Tamanho Médio da Unidade Condominial"},
+                {"label": "Tamanho médio dos Terrenos", "value": "Tamanho médio dos Terrenos"},
+                {"label": "Área Total dos terrenos/lotes", "value": "Área Total dos terrenos/lotes", "disabled": True},
+                {"label": "Área Total Ocupada", "value": "Área Total Ocupada", "disabled": True},
+                {"label": "Área Total Construída", "value": "Área Total Construída"},
+                {"label": "Valor Total dos Terrenos", "value": "Valor Total dos Terrenos", "disabled": True},
+                {"label": "Valor Total das Construções", "value": "Valor Total das Construções", "disabled": True},
+                {"label": "CA médio", "value": "CA médio"},
+                {"label": "TO médio", "value": "TO (Taxa de Ocupação)"},
+                {"label": "CA médio em lotes condominiais", "value": "CA médio em lotes condominiais"},
+                {"label": "TO médio em lotes condominiais", "value": "TO médio em lotes condominiais"},
+                {"label": "CA médio em lotes não condominiais", "value": "CA médio em lotes não condominiais"},
+                {"label": "TO médio em lotes não condominiais", "value": "TO médio em lotes não condominiais"},
+                {"label": "Comprimento Médio da Testada", "value": "Comprimento Médio da Testada"},
+                {"label": "Número médio de Pavimentos", "value": "Número médio de Pavimentos"},
+                {"label": "Fator de obsolecência médio", "value": "Fator de obsolecência médio"}
             ],
             value=[1, 2],
             id="checklist-input"
@@ -70,16 +75,16 @@ range_slider = html.Div(
 app.layout = dbc.Container(
     [
         html.H1("Dash IPTU de São Paulo"),
+        dbc.Form([range_slider]),
         dbc.Form([radioitems]),
         dbc.Form([checklist]),
-        dbc.Form([range_slider]),
         html.Br(),
         html.Div(id='my-output')
     ])
 
 @app.callback(
     Output("my-output", "children"),
-    Input("range-slider", "value")
+    Input("checklist-input", "value")
 )
 def update(input_value):
     return input_value
