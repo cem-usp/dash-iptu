@@ -21,6 +21,8 @@ app = dash.Dash(
     external_stylesheets=[dbc.themes.BOOTSTRAP]
 )
 
+server = app.server
+
 my_output = html.Div()
 
 radioitems = html.Div(
