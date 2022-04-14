@@ -5,26 +5,26 @@ argon2-cffi-bindings==21.2.0
 asgiref==3.5.0
 astropy==5.0.4
 asttokens==2.0.5
-attrs @ file:///home/conda/feedstock_root/build_artifacts/attrs_1640799537051/work
+attrs==21.4.0
 backcall==0.2.0
 beautifulsoup4==4.10.0
 blake3==0.3.1
 bleach==4.1.0
 bqplot==0.12.33
-branca @ file:///home/conda/feedstock_root/build_artifacts/branca_1609346930842/work
+branca==0.4.2
 Brotli==1.0.9
-brotlipy @ file:///home/conda/feedstock_root/build_artifacts/brotlipy_1648854164373/work
+brotlipy==0.7.0
 cachetools==5.0.0
 certifi==2021.10.8
-cffi @ file:///home/conda/feedstock_root/build_artifacts/cffi_1636046055389/work
-charset-normalizer @ file:///home/conda/feedstock_root/build_artifacts/charset-normalizer_1644853463426/work
-click @ file:///home/conda/feedstock_root/build_artifacts/click_1648793473567/work
+cffi==1.15.0
+charset-normalizer==2.0.12
+click=8.1.2
 click-plugins==1.1.1
-cligj @ file:///home/conda/feedstock_root/build_artifacts/cligj_1633637764473/work
+cligj==0.7.2
 cloudpickle==2.0.0
 commonmark==0.9.1
-cryptography @ file:///tmp/build/80754af9/cryptography_1639414572950/work
-cycler @ file:///home/conda/feedstock_root/build_artifacts/cycler_1635519461629/work
+cryptography==36.0.0
+cycler==0.11.0
 dash==2.3.1
 dash-bootstrap-components==1.1.0
 dash-core-components==2.0.0
@@ -39,21 +39,21 @@ executing==0.8.3
 fastapi==0.75.1
 fastjsonschema==2.15.3
 filelock==3.6.0
-Fiona @ file:///home/conda/feedstock_root/build_artifacts/fiona_1648319132248/work
+Fiona==1.8.21
 Flask==2.1.1
 Flask-Compress==1.11
-folium @ file:///home/conda/feedstock_root/build_artifacts/folium_1638560701663/work
-fonttools @ file:///home/conda/feedstock_root/build_artifacts/fonttools_1649176256617/work
+folium==0.12.1
+fonttools==4.31.2
 frozendict==2.3.1
 fsspec==2022.3.0
 future==0.18.2
 GDAL==3.4.2
-geopandas @ file:///home/conda/feedstock_root/build_artifacts/geopandas_1638382567988/work
+geopandas==0.10.2
 gunicorn==20.1.0
 h11==0.13.0
 h5py==3.6.0
 httptools==0.4.0
-idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1642433548627/work
+idna==3.3
 importlib-metadata==4.11.3
 ipydatawidgets==4.2.0
 ipykernel==6.12.1
@@ -68,19 +68,19 @@ ipywebrtc==0.6.0
 ipywidgets==7.7.0
 itsdangerous==2.1.2
 jedi==0.18.1
-Jinja2 @ file:///home/conda/feedstock_root/build_artifacts/jinja2_1648299710939/work
-joblib @ file:///home/conda/feedstock_root/build_artifacts/joblib_1633637554808/work
+Jinja2==3.1.1
+joblib==1.1.0
 jsonschema==4.4.0
 jupyter-client==7.2.2
 jupyter-core==4.9.2
 jupyterlab-pygments==0.1.2
 jupyterlab-widgets==1.1.0
-kiwisolver @ file:///home/conda/feedstock_root/build_artifacts/kiwisolver_1648854392795/work
+kiwisolver==1.4.2
 llvmlite==0.38.0
 locket==0.2.1
-mapclassify @ file:///home/conda/feedstock_root/build_artifacts/mapclassify_1627363180059/work
-MarkupSafe @ file:///home/conda/feedstock_root/build_artifacts/markupsafe_1648737556467/work
-matplotlib @ file:///home/conda/feedstock_root/build_artifacts/matplotlib-suite_1639359646028/work
+mapclassify==2.4.3
+MarkupSafe==2.1.1
+matplotlib==3.5.1
 matplotlib-inline==0.1.3
 mistune==0.8.4
 munch==2.5.0
