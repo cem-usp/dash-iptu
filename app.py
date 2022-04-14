@@ -17,7 +17,7 @@ gdf_distritos['area'] = gdf_distritos.area
 gdf_distritos.to_crs(epsg=4674, inplace=True)
 # df_iptu_distritos = df_iptu_distritos.merge(gdf_distritos.loc[:, ['ds_codigo', 'ds_nome']].astype({'ds_codigo': 'int'}), left_on='distrito', right_on='ds_codigo')
 
-app = dash.Dash(
+app = dash.Dash(__name__,
     external_stylesheets=[dbc.themes.BOOTSTRAP]
 )
 
