@@ -15,3 +15,4 @@ vaex-jupyter==0.7.0
 vaex-ml==0.17.0
 vaex-server==0.8.1
 vaex-viz==0.5.1
+flask==2.1.1
