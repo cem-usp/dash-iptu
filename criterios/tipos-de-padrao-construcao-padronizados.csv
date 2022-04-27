@@ -1,61 +1,61 @@
-,TIPO DE PADRAO DA CONSTRUCAO,count,padrao,contrucao,titulo_padronizado
-0,,26,,,
-1,Oficina/Posto de serviço/Armazém/D,152824,D,,
-2,Residencial horizontal - padrão A,2010356,A,horizontal,
-3,Residencial vertical - padrão E,387531,E,vertical,
-4,residência horizontal - Padrão E,181857,E,horizontal,
-5,Residencial horizontal - padrão F,13752,F,horizontal,
-6,residência horizontal - Padrão A,6149461,A,horizontal,
-7,residência horizontal - Padrão F,11250,F,horizontal,
-8,Barracão/Telheiro/Oficina - padrão,28833,,,
-9,Residencial horizontal - padrão B,2744823,B,horizontal,
-10,Residencial horizontal - padrão E,60433,E,horizontal,
-11,edifício de garagens - Padrão A,190704,A,,
-12,Comercial vertical - padrão B,437227,B,vertical,
-13,residência vertical - Padrão F,44513,F,vertical,
-14,Residencial horizontal - padrão D,327829,D,horizontal,
-15,residência vertical - Padrão C,14385051,C,vertical,
-16,TERRENO,758829,,terreno,
-17,terreno,2957125,,terreno,
-18,Templo/Clube/Ginásio ou Estádio esportivo/Museu/Hipódromo/Cinema/Teatro/Aeroporto,171519,,,
-19,Barracão/Telheiro/Oficina/Posto de serviço/Armazém/Depósito/Indústria - Padrão E,5070,E,,
-20,comercial horizontal - Padrão E,1250,E,horizontal,
-21,Barracão/Telheiro/Oficina/Posto de serviço/Armazém/Depósito/Indústria - Padrão C,403236,C,,
-22,residência vertical - Padrão A,1252478,A,vertical,
-23,Residencial vertical - padrão F,60642,F,vertical,
-24,Barracão/Telheiro/Oficina/Posto de serviço/Armazém/Depósito/Indústria - Padrão A,93090,A,,
-25,Comercial horizontal - padrão D,16274,D,horizontal,
-26,Barracão/Telheiro/Oficina/Posto de,104668,,,
-27,Comercial horizontal - padrão C,145750,C,horizontal,
-28,Residencial vertical - padrão C,6931997,C,vertical,
-29,Edifício de garagens - padrão A,65905,A,,
-30,Residencial horizontal - padrão C,4516237,C,horizontal,
-31,comercial vertical - Padrão E,80201,E,vertical,
-32,residência horizontal - Padrão D,926195,D,horizontal,
-33,Comercial vertical - padrão D,258111,D,vertical,
-34,comercial vertical - Padrão B,1175563,B,vertical,
-35,comercial vertical - Padrão A,39242,A,vertical,
-36,residência horizontal - Padrão B,6971838,B,horizontal,
-37,Comercial vertical - padrão C,745417,C,vertical,
-38,Indústria - padrão E,944,E,,
-39,comercial horizontal - Padrão D,47191,D,horizontal,
-40,Templo/Clube/Ginásio ou Estádio es,65579,,,
-41,Comercial horizontal - padrão E,1459,E,horizontal,
-42,residência horizontal - Padrão C,12589285,C,horizontal,
-43,Comercial horizontal - padrão B,635266,B,horizontal,
-44,Comercial vertical - padrão E,126430,E,vertical,
-45,comercial horizontal - Padrão B,1858101,B,horizontal,
-46,residência vertical - Padrão B,1790309,B,vertical,
-47,Comercial horizontal - padrão A,81670,A,horizontal,
-48,Residencial vertical - padrão A,583560,A,vertical,
-49,comercial horizontal - Padrão C,399839,C,horizontal,
-50,Barracão/Telheiro/Oficina/Posto de serviço/Armazém/Depósito/Indústria - Padrão D,59174,D,,
-51,residência vertical - Padrão D,3198907,D,vertical,
-52,residência vertical - Padrão E,890713,E,vertical,
-53,comercial horizontal - Padrão A,276796,A,horizontal,
-54,Residencial vertical - padrão D,1796591,D,vertical,
-55,Barracão/Telheiro/Oficina/Posto de serviço/Armazém/Depósito/Indústria - Padrão B,308795,B,,
-56,comercial vertical - Padrão D,451006,D,vertical,
-57,Comercial vertical - padrão A,13194,A,vertical,
-58,comercial vertical - Padrão C,1282807,C,vertical,
-59,Residencial vertical - padrão B,1057336,B,vertical,
+,TIPO DE PADRAO DA CONSTRUCAO,count,padrao,contrucao,titulo_padronizado,relacao_de_assertividade_com_titulo_padronizado
+0,,26,,,Residencial horizontal - padrão A,0.0
+1,Residencial horizontal - padrão A,2010356,A,horizontal,Residencial horizontal - padrão A,1.0
+2,Oficina/Posto de serviço/Armazém/D,152824,D,,Oficina/Posto de serviço/Armazém/D,1.0
+3,Residencial vertical - padrão E,387531,E,vertical,Residencial vertical - padrão E,1.0
+4,residência horizontal - Padrão E,181857,E,horizontal,Residencial horizontal - padrão E,0.8923076923076924
+5,Residencial horizontal - padrão F,13752,F,horizontal,Residencial horizontal - padrão F,1.0
+6,residência horizontal - Padrão A,6149461,A,horizontal,Residencial horizontal - padrão A,0.8923076923076924
+7,residência horizontal - Padrão F,11250,F,horizontal,Residencial horizontal - padrão F,0.8923076923076924
+8,Barracão/Telheiro/Oficina - padrão,28833,,,Barracão/Telheiro/Oficina - padrão,1.0
+9,Residencial horizontal - padrão B,2744823,B,horizontal,Residencial horizontal - padrão B,1.0
+10,Residencial horizontal - padrão E,60433,E,horizontal,Residencial horizontal - padrão E,1.0
+11,edifício de garagens - Padrão A,190704,A,,Edifício de garagens - padrão A,0.9354838709677419
+12,Comercial vertical - padrão B,437227,B,vertical,Comercial vertical - padrão B,1.0
+13,residência vertical - Padrão F,44513,F,vertical,Residencial vertical - padrão F,0.8852459016393442
+14,Residencial horizontal - padrão D,327829,D,horizontal,Residencial horizontal - padrão D,1.0
+15,residência vertical - Padrão C,14385051,C,vertical,Residencial vertical - padrão C,0.8852459016393442
+16,TERRENO,758829,,terreno,TERRENO,1.0
+17,terreno,2957125,,terreno,Indústria - padrão E,0.2962962962962963
+18,Templo/Clube/Ginásio ou Estádio esportivo/Museu/Hipódromo/Cinema/Teatro/Aeroporto,171519,,,Templo/Clube/Ginásio ou Estádio es,0.591304347826087
+19,Barracão/Telheiro/Oficina/Posto de serviço/Armazém/Depósito/Indústria - Padrão E,5070,E,,Oficina/Posto de serviço/Armazém/D,0.5964912280701754
+20,comercial horizontal - Padrão E,1250,E,horizontal,Comercial horizontal - padrão E,0.9354838709677419
+21,Barracão/Telheiro/Oficina/Posto de serviço/Armazém/Depósito/Indústria - Padrão C,403236,C,,Oficina/Posto de serviço/Armazém/D,0.5964912280701754
+22,residência vertical - Padrão A,1252478,A,vertical,Residencial vertical - padrão A,0.8852459016393442
+23,Residencial vertical - padrão F,60642,F,vertical,Residencial vertical - padrão F,1.0
+24,Barracão/Telheiro/Oficina/Posto de serviço/Armazém/Depósito/Indústria - Padrão A,93090,A,,Oficina/Posto de serviço/Armazém/D,0.5964912280701754
+25,Comercial horizontal - padrão D,16274,D,horizontal,Comercial horizontal - padrão D,1.0
+26,Barracão/Telheiro/Oficina/Posto de,104668,,,Barracão/Telheiro/Oficina/Posto de,1.0
+27,Comercial horizontal - padrão C,145750,C,horizontal,Comercial horizontal - padrão C,1.0
+28,Residencial vertical - padrão C,6931997,C,vertical,Residencial vertical - padrão C,1.0
+29,Edifício de garagens - padrão A,65905,A,,Edifício de garagens - padrão A,1.0
+30,Residencial horizontal - padrão C,4516237,C,horizontal,Residencial horizontal - padrão C,1.0
+31,comercial vertical - Padrão E,80201,E,vertical,Comercial vertical - padrão E,0.9310344827586207
+32,residência horizontal - Padrão D,926195,D,horizontal,Residencial horizontal - padrão D,0.8923076923076924
+33,Comercial vertical - padrão D,258111,D,vertical,Comercial vertical - padrão D,1.0
+34,comercial vertical - Padrão B,1175563,B,vertical,Comercial vertical - padrão B,0.9310344827586207
+35,comercial vertical - Padrão A,39242,A,vertical,Comercial vertical - padrão A,0.9310344827586207
+36,residência horizontal - Padrão B,6971838,B,horizontal,Residencial horizontal - padrão B,0.8923076923076924
+37,Comercial vertical - padrão C,745417,C,vertical,Comercial vertical - padrão C,1.0
+38,Indústria - padrão E,944,E,,Indústria - padrão E,1.0
+39,comercial horizontal - Padrão D,47191,D,horizontal,Comercial horizontal - padrão D,0.9354838709677419
+40,Templo/Clube/Ginásio ou Estádio es,65579,,,Templo/Clube/Ginásio ou Estádio es,1.0
+41,Comercial horizontal - padrão E,1459,E,horizontal,Comercial horizontal - padrão E,1.0
+42,residência horizontal - Padrão C,12589285,C,horizontal,Residencial horizontal - padrão C,0.8923076923076924
+43,Comercial horizontal - padrão B,635266,B,horizontal,Comercial horizontal - padrão B,1.0
+44,Comercial vertical - padrão E,126430,E,vertical,Comercial vertical - padrão E,1.0
+45,comercial horizontal - Padrão B,1858101,B,horizontal,Comercial horizontal - padrão B,0.9354838709677419
+46,residência vertical - Padrão B,1790309,B,vertical,Residencial vertical - padrão B,0.8852459016393442
+47,Comercial horizontal - padrão A,81670,A,horizontal,Comercial horizontal - padrão A,1.0
+48,Residencial vertical - padrão A,583560,A,vertical,Residencial vertical - padrão A,1.0
+49,comercial horizontal - Padrão C,399839,C,horizontal,Comercial horizontal - padrão C,0.9354838709677419
+50,Barracão/Telheiro/Oficina/Posto de serviço/Armazém/Depósito/Indústria - Padrão D,59174,D,,Oficina/Posto de serviço/Armazém/D,0.5964912280701754
+51,residência vertical - Padrão D,3198907,D,vertical,Residencial vertical - padrão D,0.8852459016393442
+52,residência vertical - Padrão E,890713,E,vertical,Residencial vertical - padrão E,0.8852459016393442
+53,comercial horizontal - Padrão A,276796,A,horizontal,Comercial horizontal - padrão A,0.9354838709677419
+54,Residencial vertical - padrão D,1796591,D,vertical,Residencial vertical - padrão D,1.0
+55,Barracão/Telheiro/Oficina/Posto de serviço/Armazém/Depósito/Indústria - Padrão B,308795,B,,Oficina/Posto de serviço/Armazém/D,0.5964912280701754
+56,comercial vertical - Padrão D,451006,D,vertical,Comercial vertical - padrão D,0.9310344827586207
+57,Comercial vertical - padrão A,13194,A,vertical,Comercial vertical - padrão A,1.0
+58,comercial vertical - Padrão C,1282807,C,vertical,Comercial vertical - padrão C,0.9310344827586207
+59,Residencial vertical - padrão B,1057336,B,vertical,Residencial vertical - padrão B,1.0

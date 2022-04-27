@@ -1,79 +1,79 @@
-,TIPO DE USO DO IMOVEL,count,classificacao_abrangente,titulo_padronizado
-0,,26,,
-1,"Outras edificações de uso comercial, com utilização múltipla",147516,,
-2,Residência e outro uso (predominância residencial),595522,,
-3,"outras edificações do tipo (uso especial), com utilização múltipla",24600,,
-4,"Garagem (unidade autônoma) em edifício em condomínio de escritórios, cons",178032,,
-5,"hotel, pensão ou hospedaria",34044,,
-6,Posto de serviço,16014,,
-7,residência e outro uso (predominância residencial),1680136,,
-8,"outras edificações do tipo (uso coletivo), com utilização múltipla",53862,,
-9,"Estação radioemissora, de televisão ou empresa jornalística",3358,,
-10,"Prédio de apartamento, não em condomínio, de uso exclusivamente residencial",4400,,
-11,Flat de uso comercial (semelhante a hotel),167518,,
-12,"outras edificações do tipo (uso serviço), com utilização múltipla",99725,,
-13,Apartamento em condomínio,9337687,,
-14,"residência coletiva (mais de uma residência no lote), exclusive cortiço",4131587,,
-15,"cinema, teatro, casa de diversão, clube ou congênere",11621,,
-16,Clube esportivo,3916,,
-17,Garagem (unidade autônoma) em edifício em condomínio de uso exclusivamente residencial,398219,,
-18,"Outras edificações de uso especial, com utilização múltipla",8792,,
-19,apartamento,18315682,,
-20,garagem em edifício de uso exclusivamente residencial,3023775,,
-21,oficina,224143,,
-22,"Outras edificações de uso de serviço, com utilização múltipla",34599,,
-23,residência,20674413,,
-24,posto de serviço (combustíveis),46169,,
-25,"Outras edificações de uso coletivo, com utilização múltipla",20562,,
-26,terreno,2957125,,
-27,"hospital, ambulatório, casa de saúde e assemelhados",27463,,
-28,"Cinema, teatro, casa de diversão, clube ou congênere",3957,,
-29,Loja e residência (predominância comercial),315638,,
-30,"Garagem (unidade autônoma) em edifício em condomínio de escritórios, consultórios ou misto",74506,,
-31,Garagem (unidade autônoma) em edifício em condomínio de uso exclusivament,966235,,
-32,Oficina,69972,,
-33,"Prédio de apartamento, não em condomínio, de uso misto (apartamentos e es",13563,,
-34,Cortiço,12378,,
-35,"prédio com uso exclusivamente residencial, não em condomínio",32207,,
-36,"garagem, em prédio de garagens",190019,,
-37,"prédio de escritório ou consultório, com ou sem lojas, não em condomínio",506135,,
-38,"Prédio de apartamento, não em condomínio, de uso exclusivamente residenci",10215,,
-39,"Hospital, ambulatório, casa de saúde e assemelhados",9087,,
-40,indústria,301974,,
-41,Escola,47689,,
-42,loja e residência (predominância comercial),1033966,,
-43,Loja,378215,,
-44,"Residência coletiva, exclusive cortiço (mais de uma residência no lote)",1424622,,
-45,Residência,7520626,,
-46,Garagem (exclusive em prédio em condomínio),18849,,
-47,clube esportivo,11697,,
-48,"Prédio de apartamento, não em condomínio, de uso misto (apartamentos e escritórios e/ou consultórios), com ou sem loja (predominância residencial)",5408,,
-49,"Prédio de escritório, não em condomínio, de uso misto (apartamentos e escritórios e/ou consultórios) com ou sem loja (predominância comercial)",607,,
-50,loja em edifício em condomínio,436348,,
-51,"outras edificações do tipo (uso comércio), com utilização múltipla",366569,,
-52,templo,103959,,
-53,Flat residencial em condomínio,34114,,
-54,"estacionamento e garagem, não em condomínio",51448,,
-55,"garagem em edifício de escritórios, consultórios ou misto",516650,,
-56,Indústria,93174,,
-57,Templo,40538,,
-58,armazéns gerais e depósitos,165611,,
-59,Escritório/consultório em condomínio (unidade autônoma),923529,,
-60,"flat, não residencial",249087,,
-61,"Prédio de escritório, não em condomínio, de uso misto (apartamentos e esc",1353,,
-62,escritório ou consultório,1628024,,
-63,"flat, residencial",44428,,
-64,"Hotel, pensão ou hospedaria",21288,,
-65,"prédio com uso misto, predominância de uso residencial, não em condomínio",65564,,
-66,Loja em edifício em condomínio (unidade autônoma),162987,,
-67,"prédio com uso misto, predominância de uso não residencial, não em condom",4010,,
-68,Terreno,758829,,
-69,loja,986853,,
-70,"estação radioemissora, de televisão ou empresa jornalística",4428,,
-71,Garagem (unidade autônoma) de prédio de garagens,65724,,
-72,"Asilo, orfanato, creche, seminário ou convento",5791,,
-73,"asilo, orfanato, creche, seminário ou convento",11795,,
-74,cortiço (habitação coletiva subnormal),41620,,
-75,escola,135829,,
-76,"Prédio de escritório ou consultório, não em condomínio, com ou sem lojas",173977,,
-77,Armazéns gerais e depósitos,60461,,
+,TIPO DE USO DO IMOVEL,count,titulo_padronizado,relacao_de_assertividade_com_titulo_padronizado,classificacao_abrangente
+0,,26,Residência e outro uso (predominância residencial),0.0,residencial
+1,Residência e outro uso (predominância residencial),595522,Residência e outro uso (predominância residencial),1.0,residencial
+2,"Outras edificações de uso comercial, com utilização múltipla",147516,"Outras edificações de uso comercial, com utilização múltipla",1.0,comercial
+3,"outras edificações do tipo (uso especial), com utilização múltipla",24600,"Outras edificações de uso especial, com utilização múltipla",0.912,outros
+4,"Garagem (unidade autônoma) em edifício em condomínio de escritórios, cons",178032,"Garagem (unidade autônoma) em edifício em condomínio de escritórios, consultórios ou misto",0.8957055214723927,servicos
+5,"hotel, pensão ou hospedaria",34044,"Hotel, pensão ou hospedaria",0.9629629629629629,servicos
+6,Posto de serviço,16014,Posto de serviço,1.0,servicos
+7,residência e outro uso (predominância residencial),1680136,Residência e outro uso (predominância residencial),0.98,residencial
+8,"outras edificações do tipo (uso coletivo), com utilização múltipla",53862,"Outras edificações de uso coletivo, com utilização múltipla",0.912,outros
+9,"Estação radioemissora, de televisão ou empresa jornalística",3358,"Estação radioemissora, de televisão ou empresa jornalística",1.0,servicos
+10,"Prédio de apartamento, não em condomínio, de uso exclusivamente residencial",4400,"Prédio de apartamento, não em condomínio, de uso exclusivamente residencial",1.0,residencial
+11,Flat de uso comercial (semelhante a hotel),167518,Flat de uso comercial (semelhante a hotel),1.0,servicos
+12,"outras edificações do tipo (uso serviço), com utilização múltipla",99725,"Outras edificações de uso de serviço, com utilização múltipla",0.8888888888888888,servicos
+13,Apartamento em condomínio,9337687,Apartamento em condomínio,1.0,residencial
+14,"residência coletiva (mais de uma residência no lote), exclusive cortiço",4131587,"Residência coletiva, exclusive cortiço (mais de uma residência no lote)",0.7183098591549296,residencial
+15,"cinema, teatro, casa de diversão, clube ou congênere",11621,"Cinema, teatro, casa de diversão, clube ou congênere",0.9807692307692307,servicos
+16,Clube esportivo,3916,Clube esportivo,1.0,servicos
+17,Garagem (unidade autônoma) em edifício em condomínio de uso exclusivamente residencial,398219,Garagem (unidade autônoma) em edifício em condomínio de uso exclusivamente residencial,1.0,residencial
+18,"Outras edificações de uso especial, com utilização múltipla",8792,"Outras edificações de uso especial, com utilização múltipla",1.0,outros
+19,apartamento,18315682,Apartamento em condomínio,0.5555555555555556,residencial
+20,garagem em edifício de uso exclusivamente residencial,3023775,Garagem (unidade autônoma) em edifício em condomínio de uso exclusivamente residencial,0.7482014388489209,residencial
+21,oficina,224143,Oficina,0.8571428571428571,servicos
+22,"Outras edificações de uso de serviço, com utilização múltipla",34599,"Outras edificações de uso de serviço, com utilização múltipla",1.0,servicos
+23,residência,20674413,Residência,0.9,residencial
+24,posto de serviço (combustíveis),46169,Posto de serviço,0.6382978723404256,servicos
+25,"Outras edificações de uso coletivo, com utilização múltipla",20562,"Outras edificações de uso coletivo, com utilização múltipla",1.0,outros
+26,terreno,2957125,Terreno,0.8571428571428571,outros
+27,"hospital, ambulatório, casa de saúde e assemelhados",27463,"Hospital, ambulatório, casa de saúde e assemelhados",0.9803921568627451,servicos
+28,"Cinema, teatro, casa de diversão, clube ou congênere",3957,"Cinema, teatro, casa de diversão, clube ou congênere",1.0,servicos
+29,Loja e residência (predominância comercial),315638,Loja e residência (predominância comercial),1.0,comercial
+30,"Garagem (unidade autônoma) em edifício em condomínio de escritórios, consultórios ou misto",74506,"Garagem (unidade autônoma) em edifício em condomínio de escritórios, consultórios ou misto",1.0,servicos
+31,Garagem (unidade autônoma) em edifício em condomínio de uso exclusivament,966235,Garagem (unidade autônoma) em edifício em condomínio de uso exclusivamente residencial,0.9182389937106918,residencial
+32,Oficina,69972,Oficina,1.0,servicos
+33,Cortiço,12378,Cortiço,1.0,residencial
+34,"Prédio de apartamento, não em condomínio, de uso misto (apartamentos e es",13563,"Prédio de apartamento, não em condomínio, de uso exclusivamente residencial",0.7972972972972973,residencial
+35,"prédio com uso exclusivamente residencial, não em condomínio",32207,Flat residencial em condomínio,0.6444444444444445,servicos
+36,"garagem, em prédio de garagens",190019,Garagem (unidade autônoma) de prédio de garagens,0.717948717948718,servicos
+37,"prédio de escritório ou consultório, com ou sem lojas, não em condomínio",506135,"Prédio de escritório ou consultório, não em condomínio, com ou sem lojas",0.7361111111111112,servicos
+38,"Prédio de apartamento, não em condomínio, de uso exclusivamente residenci",10215,"Prédio de apartamento, não em condomínio, de uso exclusivamente residencial",0.9864864864864865,residencial
+39,"Hospital, ambulatório, casa de saúde e assemelhados",9087,"Hospital, ambulatório, casa de saúde e assemelhados",1.0,servicos
+40,indústria,301974,Indústria,0.8888888888888888,industrial
+41,Escola,47689,Escola,1.0,servicos
+42,loja e residência (predominância comercial),1033966,Loja e residência (predominância comercial),0.9767441860465116,comercial
+43,Loja,378215,Loja,1.0,comercial
+44,"Residência coletiva, exclusive cortiço (mais de uma residência no lote)",1424622,"Residência coletiva, exclusive cortiço (mais de uma residência no lote)",1.0,residencial
+45,Residência,7520626,Residência,1.0,residencial
+46,Garagem (exclusive em prédio em condomínio),18849,Garagem (exclusive em prédio em condomínio),1.0,outros
+47,clube esportivo,11697,Clube esportivo,0.9333333333333333,servicos
+48,"Prédio de apartamento, não em condomínio, de uso misto (apartamentos e escritórios e/ou consultórios), com ou sem loja (predominância residencial)",5408,"Prédio de apartamento, não em condomínio, de uso misto (apartamentos e escritórios e/ou consultórios), com ou sem loja (predominância residencial)",1.0,servicos
+49,"Prédio de escritório, não em condomínio, de uso misto (apartamentos e escritórios e/ou consultórios) com ou sem loja (predominância comercial)",607,"Prédio de escritório, não em condomínio, de uso misto (apartamentos e escritórios e/ou consultórios) com ou sem loja (predominância comercial)",1.0,servicos
+50,loja em edifício em condomínio,436348,Loja em edifício em condomínio (unidade autônoma),0.7341772151898734,comercial
+51,"outras edificações do tipo (uso comércio), com utilização múltipla",366569,"Outras edificações de uso comercial, com utilização múltipla",0.873015873015873,comercial
+52,templo,103959,Templo,0.8333333333333334,servicos
+53,Flat residencial em condomínio,34114,Flat residencial em condomínio,1.0,servicos
+54,"estacionamento e garagem, não em condomínio",51448,Apartamento em condomínio,0.6176470588235294,residencial
+55,"garagem em edifício de escritórios, consultórios ou misto",516650,"Garagem (unidade autônoma) em edifício em condomínio de escritórios, consultórios ou misto",0.7619047619047619,servicos
+56,Indústria,93174,Indústria,1.0,industrial
+57,Templo,40538,Templo,1.0,servicos
+58,armazéns gerais e depósitos,165611,Armazéns gerais e depósitos,0.9629629629629629,industrial
+59,Escritório/consultório em condomínio (unidade autônoma),923529,Escritório/consultório em condomínio (unidade autônoma),1.0,servicos
+60,"flat, não residencial",249087,Flat residencial em condomínio,0.5882352941176471,servicos
+61,"Prédio de escritório, não em condomínio, de uso misto (apartamentos e esc",1353,"Prédio de apartamento, não em condomínio, de uso exclusivamente residencial",0.7027027027027027,residencial
+62,escritório ou consultório,1628024,"Prédio de escritório ou consultório, não em condomínio, com ou sem lojas",0.5154639175257731,servicos
+63,"flat, residencial",44428,Flat residencial em condomínio,0.6382978723404256,servicos
+64,"Hotel, pensão ou hospedaria",21288,"Hotel, pensão ou hospedaria",1.0,servicos
+65,"prédio com uso misto, predominância de uso residencial, não em condomínio",65564,Flat residencial em condomínio,0.5242718446601942,servicos
+66,Loja em edifício em condomínio (unidade autônoma),162987,Loja em edifício em condomínio (unidade autônoma),1.0,comercial
+67,"prédio com uso misto, predominância de uso não residencial, não em condom",4010,Residência e outro uso (predominância residencial),0.5203252032520326,residencial
+68,Terreno,758829,Terreno,1.0,outros
+69,loja,986853,Loja,0.75,comercial
+70,"estação radioemissora, de televisão ou empresa jornalística",4428,"Estação radioemissora, de televisão ou empresa jornalística",0.9830508474576272,servicos
+71,"Asilo, orfanato, creche, seminário ou convento",5791,"Asilo, orfanato, creche, seminário ou convento",1.0,servicos
+72,Garagem (unidade autônoma) de prédio de garagens,65724,Garagem (unidade autônoma) de prédio de garagens,1.0,servicos
+73,"asilo, orfanato, creche, seminário ou convento",11795,"Asilo, orfanato, creche, seminário ou convento",0.9782608695652174,servicos
+74,escola,135829,Escola,0.8333333333333334,servicos
+75,cortiço (habitação coletiva subnormal),41620,Residência e outro uso (predominância residencial),0.36363636363636365,residencial
+76,"Prédio de escritório ou consultório, não em condomínio, com ou sem lojas",173977,"Prédio de escritório ou consultório, não em condomínio, com ou sem lojas",1.0,servicos
+77,Armazéns gerais e depósitos,60461,Armazéns gerais e depósitos,1.0,industrial
