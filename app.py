@@ -33,17 +33,13 @@ gdf_subprefeitura.geometry = gdf_subprefeitura.simplify(tolerance=100)
 gdf_subprefeitura.to_crs(epsg=4674, inplace=True)
 
 app = dash.Dash(__name__,
-    external_stylesheets=[dbc.themes.BOOTSTRAP]
-)
-
-app.config.update({
+    external_stylesheets=[dbc.themes.BOOTSTRAP],
     # as the proxy server will remove the prefix
-    'routes_pathname_prefix': '/', 
-
+    routes_pathname_prefix='/',
     # the front-end will prefix this string to the requests
     # that are made to the proxy server
-    'requests_pathname_prefix': '/dash-iptu/'
-})
+    requests_pathname_prefix='/dash-iptu/'
+)
 
 server = app.server
 
