@@ -35,7 +35,10 @@ gdf_subprefeitura.to_crs(epsg=4674, inplace=True)
 app = dash.Dash(__name__,
     external_stylesheets=[dbc.themes.BOOTSTRAP],
     # as the proxy server will remove the prefix
-    routes_pathname_prefix='/',
+    ## TODO IF PRODUCTION
+    # routes_pathname_prefix='/',
+    routes_pathname_prefix='/dash-iptu/',
+
     # the front-end will prefix this string to the requests
     # that are made to the proxy server
     requests_pathname_prefix='/dash-iptu/'
@@ -98,6 +101,7 @@ range_slider = html.Div(
                         min=1995, 
                         max=2022, 
                         step=1, 
+                        updatemode='drag',
                         # value=[2022,2022],
                         value=[2022],
                         marks={1995: '1995',2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
@@ -111,13 +115,20 @@ app.layout = dbc.Container(
         dbc.Row(
             dbc.Col(
                 [html.H1("CEM - Centro de Estudo das Metrópoles"),
-                html.H2("Dash IPTU de São Paulo (1995-2022) - V.0.0.1"),
+                html.H2("Dash IPTU de São Paulo (1995-2022) - V.0.0.3"),
                 dcc.Markdown('''
                 Prova de conceito em fase de pré-testes para validação do uso da série histórica dos dados de IPTU de São Paulo, com mais de 83 milhões de registros, com objetivo de visualização e exportação de dados agregados espacialmente para disseminação de seu uso para diversas disciplinas e finalidades.
 
                 Código disponível em [https://github.com/cem-usp/dash-iptu] comentários, sugestões, inconsistências reportar preferencialmente por `issue` no GitHub ou por email para [feromes@usp.br](mailto:feromes@usp.br)
                 '''),
-                dbc.Form([range_slider])]
+                dcc.Loading(
+                    id='loading-map',
+                    type='default',
+                    # fullscreen=True,
+                    children=html.Div(id='loading-output')
+                ),
+                dbc.Form([range_slider])
+          ]
             )
         ),
         dbc.Row([
@@ -151,6 +162,7 @@ app.layout = dbc.Container(
 
 @app.callback(
     Output("graph", "figure"), 
+    Output("loading-map", "children"),
     Input("checklist-input", "value"),
     Input("range-slider", "value"),
     Input("radioitems-input", "value"),
@@ -178,14 +190,16 @@ def update_map(atributo, ano, agregacao, mapa_atual):
     #     hover_data = ["od_nome"]
     #     custom_data=["od_id"]
 
-    gdf_agregacao, hover_data, custom_data = sel_agregacao(agregacao, ano)
+    gdf_agregacao, hover_data, custom_data, min_max = sel_agregacao(agregacao, ano, atributo)
 
     fig = px.choropleth_mapbox(gdf_agregacao,
                     geojson=gdf_agregacao.geometry,
                     zoom=zoom,
                     center=center,
+                    animation_frame='ano',
                     #  projection="transverse mercator",
                     color=atributo,
+                    range_color=min_max,
                     locations=gdf_agregacao.index.to_list(),
                     mapbox_style="white-bg",
                     hover_data=hover_data,
@@ -195,7 +209,9 @@ def update_map(atributo, ano, agregacao, mapa_atual):
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0},
                     title={'text': 'Seila'})
 
-    return fig
+    loading = None
+
+    return fig, loading
 
 @app.callback(
     Output("table", "columns"),
@@ -214,24 +230,28 @@ def gen_table(atributo):
 def change_title(atributo):
     return f'Download da série histórica para {atributo} por Distrito'
 
-def sel_agregacao(agregacao, ano):
+def sel_agregacao(agregacao, ano, atributo):
 
     if agregacao == 1:
         gdf_agregacao = gdf_distritos.astype({'ds_codigo': 'int'}).merge(df_iptu_distrito[df_iptu_distrito.ano == ano].to_pandas_df(), left_on='ds_codigo', right_on='distrito')
+        # gdf_agregacao = gdf_distritos.astype({'ds_codigo': 'int'}).merge(df_iptu_distrito[:].to_pandas_df(), left_on='ds_codigo', right_on='distrito')
         hover_data = ["ds_nome"]
         custom_data=["ds_codigo"]
+        min_max = [df_iptu_distrito[atributo].min().item(), df_iptu_distrito[atributo].max().item()]
 
     if agregacao == 2:
         gdf_agregacao = gdf_subprefeitura.astype({'sp_codigo': 'int'}).merge(df_iptu_subprefeitura[df_iptu_subprefeitura.ano == ano].to_pandas_df(), left_on='sp_codigo', right_on='subprefeitura')
         hover_data = ["sp_nome"]
         custom_data=["sp_codigo"]
+        min_max = [df_iptu_subprefeitura[atributo].min().item(), df_iptu_subprefeitura[atributo].max().item()]
 
     if agregacao == 3:
         gdf_agregacao = gdf_od.astype({'od_id': 'int'}).merge(df_iptu_od[df_iptu_od.ano == ano].to_pandas_df(), left_on='od_id', right_on='od')        
         hover_data = ["od_nome"]
         custom_data=["od_id"]
+        min_max = [df_iptu_od[atributo].min().item(), df_iptu_od[atributo].max().item()]
 
-    return gdf_agregacao, hover_data, custom_data
+    return gdf_agregacao, hover_data, custom_data, min_max
 
 if __name__ == '__main__':
     # app.run_server(debug=True)
