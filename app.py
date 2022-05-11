@@ -86,7 +86,12 @@ checklist = html.Div(
                 {"label": "TO médio em lotes não condominiais", "value": "TO médio em lotes não condominiais"},
                 {"label": "Comprimento Médio da Testada", "value": "Comprimento Médio da Testada"},
                 {"label": "Número médio de Pavimentos", "value": "Número médio de Pavimentos"},
-                {"label": "Fator de obsolecência médio", "value": "Fator de obsolecência médio"}
+                {"label": "Fator de obsolecência médio", "value": "Fator de obsolecência médio"},
+                {"label": "Percentual de Uso Residencial", "value": "Percentual de Uso Residencial"},
+                {"label": "Percentual de Uso Comercial", "value": "Percentual de Uso Comercial"},
+                {"label": "Percentual de Uso Serviços", "value": "Percentual de Uso Serviços"},
+                {"label": "Percentual de Uso Industrial", "value": "Percentual de Uso Industrial"},
+                {"label": "Percentual de Uso Outros", "value": "Percentual de Uso Outros"},
             ],
             value='Área Total Construída',
             id="checklist-input"
