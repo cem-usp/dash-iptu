@@ -10,6 +10,7 @@ import dash
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import vaex
+import os
 
 df_iptu_distrito = vaex.open('data/IPTU-1995-2022-agrupados-por-distrito.hdf5')
 df_iptu_subprefeitura = vaex.open('data/IPTU-1995-2022-agrupados-por-subprefeitura.hdf5')
@@ -32,12 +33,18 @@ gdf_subprefeitura['area'] = gdf_subprefeitura.area
 gdf_subprefeitura.geometry = gdf_subprefeitura.simplify(tolerance=100)
 gdf_subprefeitura.to_crs(epsg=4674, inplace=True)
 
+routes_pathname_prefix='/dash-iptu/'
+
+if 'DASH_ENV' in os.environ: 
+    if os.environ['DASH_ENV'] == 'production':
+        routes_pathname_prefix='/'
+
 app = dash.Dash(__name__,
     external_stylesheets=[dbc.themes.BOOTSTRAP],
     # as the proxy server will remove the prefix
     ## TODO IF PRODUCTION
     # routes_pathname_prefix='/',
-    routes_pathname_prefix='/dash-iptu/',
+    routes_pathname_prefix=routes_pathname_prefix,
 
     # the front-end will prefix this string to the requests
     # that are made to the proxy server
@@ -260,5 +267,5 @@ def sel_agregacao(agregacao, ano, atributo):
 
 if __name__ == '__main__':
     # app.run_server(debug=True)
-    app.run_server(debug=True, host='0.0.0.0')
+    app.run_server(debug=True, host='0.0.0.0', ssl_context='adhoc')
     
