@@ -35,9 +35,9 @@ gdf_subprefeitura.to_crs(epsg=4674, inplace=True)
 
 routes_pathname_prefix='/dash-iptu/'
 
-if 'DASH_ENV' in os.environ: 
-    if os.environ['DASH_ENV'] == 'production':
-        routes_pathname_prefix='/'
+# if 'DASH_ENV' in os.environ: 
+#     if os.environ['DASH_ENV'] == 'production':
+#         routes_pathname_prefix='/'
 
 app = dash.Dash(__name__,
     external_stylesheets=[dbc.themes.BOOTSTRAP],
@@ -267,5 +267,6 @@ def sel_agregacao(agregacao, ano, atributo):
 
 if __name__ == '__main__':
     # app.run_server(debug=True)
+    # app.run_server(debug=True, host='0.0.0.0', ssl_context='adhoc')
     app.run_server(debug=True, host='0.0.0.0')
     
