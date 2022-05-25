@@ -16,7 +16,7 @@ import os
 df_iptu_distrito = vaex.open('data/IPTU-1995-2022-agrupados-por-distrito.hdf5')
 df_iptu_subprefeitura = vaex.open('data/IPTU-1995-2022-agrupados-por-subprefeitura.hdf5')
 df_iptu_od = vaex.open('data/IPTU-1995-2022-agrupados-por-od.hdf5')
-df_iptu_sq = vaex.open('data/IPTU-1995-2022-agrupados-por-sq.hdf5')
+# df_iptu_sq = vaex.open('data/IPTU-1995-2022-agrupados-por-sq.hdf5')
 
 gdf_distritos = gpd.read_file('data/SIRGAS_GPKG_distrito.gpkg')
 gdf_distritos['area'] = gdf_distritos.area
@@ -139,7 +139,7 @@ app.layout = dbc.Container(
         dbc.Row(
             dbc.Col(
                 [html.H1("CEM - Centro de Estudo das Metrópoles"),
-                html.H2("Dash IPTU de São Paulo (1995-2022) - V.0.0.3"),
+                html.H2("Dash IPTU de São Paulo (1995-2022) - V.0.4"),
                 dcc.Markdown('''
                 Prova de conceito em fase de pré-testes para validação do uso da série histórica dos dados de IPTU de São Paulo, com mais de 83 milhões de registros, com objetivo de visualização e exportação de dados agregados espacialmente para disseminação de seu uso para diversas disciplinas e finalidades.
 
