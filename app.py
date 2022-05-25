@@ -83,38 +83,64 @@ radioitems = html.Div(
     ]
 )
 
+atributos = [
+    "Quantidade de Unidades Condominiais",
+    "Tamanho Médio da Unidade Condominial",
+    "Tamanho médio dos Terrenos",
+    "Área Total dos terrenos-lotes",
+    "Área Total Ocupada",
+    "Área Total Construída",
+    "Valor Total dos Terrenos",
+    "Valor Total das Construções",
+    "CA médio",
+    "TO médio",
+    "CA médio em lotes condominiais",
+    "TO médio em lotes condominiais",
+    "CA médio em lotes não condominiais",
+    "TO médio em lotes não condominiais",
+    "Comprimento Médio da Testada",
+    "Número médio de Pavimentos",
+    "Fator de obsolecência médio",
+    "Percentual de Uso Residencial",
+    "Percentual de Uso Comercial",
+    "Percentual de Uso Serviços",
+    "Percentual de Uso Industrial",
+    "Percentual de Uso Outros"
+]
+
 checklist = html.Div(
     [
         dbc.Label("Selecione as totalizações, índices ou Quantitativos"),
-        dbc.RadioItems(
-            options=[
-                # {"label": "Quantidade de Unidades", "value": "Quantidade de Unidades", "disabled": False},
-                {"label": "Quantidade de Unidades Condominiais", "value": "Quantidade de Unidades Condominiais"},
-                {"label": "Tamanho Médio da Unidade Condominial", "value": "Tamanho Médio da Unidade Condominial"},
-                {"label": "Tamanho médio dos Terrenos", "value": "Tamanho médio dos Terrenos"},
-                {"label": "Área Total dos terrenos-lotes", "value": "Área Total dos terrenos-lotes", "disabled": False},
-                {"label": "Área Total Ocupada", "value": "Área Total Ocupada", "disabled": False},
-                {"label": "Área Total Construída", "value": "Área Total Construída"},
-                {"label": "Valor Total dos Terrenos", "value": "Valor Total dos Terrenos", "disabled": False},
-                {"label": "Valor Total das Construções", "value": "Valor Total das Construções", "disabled": False},
-                {"label": "CA médio", "value": "CA médio"},
-                {"label": "TO médio", "value": "TO médio"},
-                {"label": "CA médio em lotes condominiais", "value": "CA médio em lotes condominiais"},
-                {"label": "TO médio em lotes condominiais", "value": "TO médio em lotes condominiais"},
-                {"label": "CA médio em lotes não condominiais", "value": "CA médio em lotes não condominiais"},
-                {"label": "TO médio em lotes não condominiais", "value": "TO médio em lotes não condominiais"},
-                {"label": "Comprimento Médio da Testada", "value": "Comprimento Médio da Testada"},
-                {"label": "Número médio de Pavimentos", "value": "Número médio de Pavimentos"},
-                {"label": "Fator de obsolecência médio", "value": "Fator de obsolecência médio"},
-                {"label": "Percentual de Uso Residencial", "value": "Percentual de Uso Residencial"},
-                {"label": "Percentual de Uso Comercial", "value": "Percentual de Uso Comercial"},
-                {"label": "Percentual de Uso Serviços", "value": "Percentual de Uso Serviços"},
-                {"label": "Percentual de Uso Industrial", "value": "Percentual de Uso Industrial"},
-                {"label": "Percentual de Uso Outros", "value": "Percentual de Uso Outros"},
-            ],
-            value='Área Total Construída',
-            id="checklist-input"
-        ),
+        dcc.Dropdown(atributos, "Área Total Construída", id='dropdown-input', clearable=False),
+        # dbc.RadioItems(
+        #     options=[
+        #         # {"label": "Quantidade de Unidades", "value": "Quantidade de Unidades", "disabled": False},
+        #         {"label": "Quantidade de Unidades Condominiais", "value": "Quantidade de Unidades Condominiais"},
+        #         {"label": "Tamanho Médio da Unidade Condominial", "value": "Tamanho Médio da Unidade Condominial"},
+        #         {"label": "Tamanho médio dos Terrenos", "value": "Tamanho médio dos Terrenos"},
+        #         {"label": "Área Total dos terrenos-lotes", "value": "Área Total dos terrenos-lotes", "disabled": False},
+        #         {"label": "Área Total Ocupada", "value": "Área Total Ocupada", "disabled": False},
+        #         {"label": "Área Total Construída", "value": "Área Total Construída"},
+        #         {"label": "Valor Total dos Terrenos", "value": "Valor Total dos Terrenos", "disabled": False},
+        #         {"label": "Valor Total das Construções", "value": "Valor Total das Construções", "disabled": False},
+        #         {"label": "CA médio", "value": "CA médio"},
+        #         {"label": "TO médio", "value": "TO médio"},
+        #         {"label": "CA médio em lotes condominiais", "value": "CA médio em lotes condominiais"},
+        #         {"label": "TO médio em lotes condominiais", "value": "TO médio em lotes condominiais"},
+        #         {"label": "CA médio em lotes não condominiais", "value": "CA médio em lotes não condominiais"},
+        #         {"label": "TO médio em lotes não condominiais", "value": "TO médio em lotes não condominiais"},
+        #         {"label": "Comprimento Médio da Testada", "value": "Comprimento Médio da Testada"},
+        #         {"label": "Número médio de Pavimentos", "value": "Número médio de Pavimentos"},
+        #         {"label": "Fator de obsolecência médio", "value": "Fator de obsolecência médio"},
+        #         {"label": "Percentual de Uso Residencial", "value": "Percentual de Uso Residencial"},
+        #         {"label": "Percentual de Uso Comercial", "value": "Percentual de Uso Comercial"},
+        #         {"label": "Percentual de Uso Serviços", "value": "Percentual de Uso Serviços"},
+        #         {"label": "Percentual de Uso Industrial", "value": "Percentual de Uso Industrial"},
+        #         {"label": "Percentual de Uso Outros", "value": "Percentual de Uso Outros"},
+        #     ],
+        #     value='Área Total Construída',
+        #     id="checklist-input"
+        # ),
     ]
 )
 
@@ -145,10 +171,10 @@ app.layout = dbc.Container(
 
                 Código disponível em [https://github.com/cem-usp/dash-iptu] comentários, sugestões, inconsistências reportar preferencialmente por `issue` no GitHub ou por email para [feromes@usp.br](mailto:feromes@usp.br)
                 '''),
-                dcc.Tabs(id='tabs-example-1', value='tab-1', children=[
-                    dcc.Tab(label='Área Total Construída em 2022', value='tab-1', id='tab-1'),
-                    dcc.Tab(label='Variação de 1995 à 2022', value='tab-2', id='tab-2'),
-                    dcc.Tab(label='Descrição do cálculo/processamento para Área Total Construída', value='tab-3', id='tab-3'),
+                dcc.Tabs(id='tab', value='atributo', children=[
+                    dcc.Tab(label='Área Total Construída em 2022', value='atributo', id='tab-1'),
+                    dcc.Tab(label='Variação de 1995 à 2022', value='variacao', id='tab-2'),
+                    dcc.Tab(label='Descrição do cálculo/processamento para Área Total Construída', value='descricao', id='tab-3'),
                 ]),
                 dcc.Loading(
                     id='loading-map',
@@ -164,11 +190,12 @@ app.layout = dbc.Container(
             dbc.Col(
                 [dbc.Form([radioitems]),
                 dbc.Form([checklist]),
+                html.Br(),
+                dbc.Button('Download', id='download-button', n_clicks=0),
                 html.Br()]
             ),
             dbc.Col(
                 [dcc.Graph(id="graph"),
-                dbc.Button('Download', id='download-button', n_clicks=0),
                 dcc.Download(id="download-gpkg")], width=8
             )]
         ),
@@ -198,7 +225,7 @@ app.layout = dbc.Container(
     Output("tab-1", "label"),
     Output("tab-2", "label"),
     Output("tab-3", "label"),
-    Input("checklist-input", "value"),
+    Input("dropdown-input", "value"),
     Input("range-slider", "value"),
     Input("radioitems-input", "value"),
     State('graph', 'figure'))
@@ -302,15 +329,20 @@ def sel_agregacao(agregacao, ano, atributo):
 @app.callback(
     Output("download-gpkg", "data"),
     Input("download-button", "n_clicks"),
-    State("checklist-input", "value"),
+    State("dropdown-input", "value"),
     State("range-slider", "value"),
     State("radioitems-input", "value"),
+    State("tab", "value"),
     prevent_initial_call=True,
 )
-def func(n_clicks, atributo, ano, agregacao):
+def func(n_clicks, atributo, ano, agregacao, tab):
     # return dict(content="Hello world!", filename="hello.txt")
-    return dict(content=sel_agregacao(agregacao, ano[-1], atributo)[0].to_json(), 
-                filename=f"IPTU-SP-{atributo.replace(' ','-')}-{ano[-1]}-{agregacao}.geojson")
+    if tab == "variacao":
+        return dict(content=sel_agregacao(agregacao, ano[-1], atributo)[0].to_json(), 
+                    filename=f"IPTU-SP-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
+    else:
+        return dict(content=sel_agregacao(agregacao, ano[-1], atributo)[0].to_json(), 
+                    filename=f"IPTU-SP-variacao-de-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
 
 
 if __name__ == '__main__':
