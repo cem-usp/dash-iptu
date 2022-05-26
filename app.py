@@ -3,6 +3,8 @@
 
 # from cgitb import enable
 # from faulthandler import disable
+from cgitb import enable
+from faulthandler import disable
 from certifi import contents
 import geopandas as gpd
 import pandas as pd
@@ -131,16 +133,17 @@ app.layout = dbc.Container(
         dbc.Row(
             dbc.Col(
                 [html.H1("CEM - Centro de Estudo das Metrópoles"),
-                html.H2("Dash IPTU de São Paulo (1995-2022) - V.0.4"),
+                html.H2("Dash IPTU de São Paulo (1995-2022) - V.0.4.2"),
                 dcc.Markdown('''
                 Prova de conceito em fase de pré-testes para validação do uso da série histórica dos dados de IPTU de São Paulo, com mais de 83 milhões de registros, com objetivo de visualização e exportação de dados agregados espacialmente para disseminação de seu uso para diversas disciplinas e finalidades.
 
                 Código disponível em [https://github.com/cem-usp/dash-iptu] comentários, sugestões, inconsistências reportar preferencialmente por `issue` no GitHub ou por email para [feromes@usp.br](mailto:feromes@usp.br)
                 '''),
                 dcc.Tabs(id='tab', value='atributo', children=[
+                    dcc.Tab(label='Sobre o Dash do IPTU', value='sobre', id='tab-0', disabled=True),
                     dcc.Tab(label='Área Total Construída em 2022', value='atributo', id='tab-1'),
                     dcc.Tab(label='Diferença de 1995 à 2022', value='diferenca', id='tab-2'),
-                    dcc.Tab(label='Descrição do cálculo/processamento para Área Total Construída', value='descricao', id='tab-3'),
+                    dcc.Tab(label='Descrição do cálculo/processamento para Área Total Construída', value='descricao', id='tab-3', disabled=True),
                 ]),
                 dcc.Loading(
                     id='loading-map',
@@ -215,7 +218,7 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
                     locations=gdf_map.index.to_list(),
                     mapbox_style="white-bg",
                     hover_data=hover_data,
-                    custom_data=custom_data,
+                    # custom_data=custom_data,
                     height=600,
                     width=800)
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0},
@@ -241,8 +244,9 @@ def sel_agregacao(agregacao, ano, atributo):
                     [["ds_codigo", "ds_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         gdf_agregacao = gdf.loc[gdf.ano == ano[-1]]
         diff = gdf.pivot(index='ds_codigo', columns='ano', values=atributo)
-        gdf_diff =  gdf_distritos.astype({'ds_codigo': 'int'}).copy()
-        gdf_diff[atributo] = (diff[ano[-1]] - diff[ano[0]])
+        gdf_diff = gdf_distritos.astype({'ds_codigo': 'int'}).set_index('ds_codigo').merge(diff, left_index=True, right_index=True, how='left')
+        gdf_diff.loc[:, atributo] = (gdf_diff[ano[-1]] - gdf_diff[ano[0]])
+        gdf_agregacao.set_index('ds_codigo', inplace=True)
         hover_data = ["ds_nome"]
         custom_data=["ds_codigo"]
         min_max = [df_iptu_distrito[atributo].min().item(), df_iptu_distrito[atributo].max().item()]
@@ -255,8 +259,9 @@ def sel_agregacao(agregacao, ano, atributo):
                     [["sp_codigo", "sp_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         gdf_agregacao = gdf.loc[gdf.ano == ano[-1]]
         diff = gdf.pivot(index='sp_codigo', columns='ano', values=atributo)
-        gdf_diff =  gdf_subprefeitura.astype({'sp_codigo': 'int'}).copy()
-        gdf_diff[atributo] = (diff[ano[-1]] - diff[ano[0]])
+        gdf_diff = gdf_subprefeitura.astype({'sp_codigo': 'int'}).set_index('sp_codigo').merge(diff, left_index=True, right_index=True, how='left')
+        gdf_diff.loc[:, atributo] = (gdf_diff[ano[-1]] - gdf_diff[ano[0]])
+        gdf_agregacao.set_index('sp_codigo', inplace=True)
         hover_data = ["sp_nome"]
         custom_data=["sp_codigo"]
         min_max = [df_iptu_subprefeitura[atributo].min().item(), df_iptu_subprefeitura[atributo].max().item()]
@@ -269,10 +274,9 @@ def sel_agregacao(agregacao, ano, atributo):
                     [["od_id", "od_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         gdf_agregacao = gdf.loc[gdf.ano == ano[-1]]
         diff = gdf.pivot(index='od_id', columns='ano', values=atributo)
-        gdf_diff =  gdf_od.astype({'od_id': 'int'}).copy()
-        gdf_diff[atributo] = (diff[ano[-1]] - diff[ano[0]])
-
-        # gdf_agregacao = gdf_od.astype({'od_id': 'int'}).merge(df_iptu_od[df_iptu_od.ano == ano].to_pandas_df(), left_on='od_id', right_on='od')[["od_id", "od_nome", atributo, 'geometry', 'ano',  'Quantidade de Unidades']]        
+        gdf_diff = gdf_od.astype({'od_id': 'int'}).set_index('od_id').merge(diff, left_index=True, right_index=True, how='left')
+        gdf_diff.loc[:, atributo] = (gdf_diff[ano[-1]] - gdf_diff[ano[0]])
+        gdf_agregacao.set_index('od_id', inplace=True)
         hover_data = ["od_nome"]
         custom_data=["od_id"]
         min_max = [df_iptu_od[atributo].min().item(), df_iptu_od[atributo].max().item()]
@@ -294,7 +298,7 @@ def func(n_clicks, atributo, ano, agregacao, tab):
         return dict(content=sel_agregacao(agregacao, ano, atributo)[0].to_json(), 
                     filename=f"IPTU-SP-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
     else:
-        return dict(content=sel_agregacao(agregacao, ano, atributo)[0].to_json(), 
+        return dict(content=sel_agregacao(agregacao, ano, atributo)[5].to_json(), 
                     filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
 
 
