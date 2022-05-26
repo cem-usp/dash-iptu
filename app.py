@@ -65,11 +65,6 @@ radioitems = html.Div(
         dbc.Label("Selecione a agregação espacial"),
         dbc.RadioItems(
             options=[
-                # {"label": "Subprefeituras", "value": 2, "disabled": False},
-                # {"label": "Distritos", "value": 1},
-                # {"label": "Zonas OD", "value": 3, "disabled": False},
-                # {"label": "Macroáreas PDE", "value": 4, "disabled": True},
-                # {"label": "Quadras", "value": 5, "disabled": True},
                 {"label": "Subprefeituras", "value": 'subprefeituras', "disabled": False},
                 {"label": "Distritos", "value": 'distritos'},
                 {"label": "Zonas OD", "value": 'zonas-od', "disabled": False},
@@ -112,35 +107,6 @@ checklist = html.Div(
     [
         dbc.Label("Selecione as totalizações, índices ou Quantitativos"),
         dcc.Dropdown(atributos, "Área Total Construída", id='dropdown-input', clearable=False),
-        # dbc.RadioItems(
-        #     options=[
-        #         # {"label": "Quantidade de Unidades", "value": "Quantidade de Unidades", "disabled": False},
-        #         {"label": "Quantidade de Unidades Condominiais", "value": "Quantidade de Unidades Condominiais"},
-        #         {"label": "Tamanho Médio da Unidade Condominial", "value": "Tamanho Médio da Unidade Condominial"},
-        #         {"label": "Tamanho médio dos Terrenos", "value": "Tamanho médio dos Terrenos"},
-        #         {"label": "Área Total dos terrenos-lotes", "value": "Área Total dos terrenos-lotes", "disabled": False},
-        #         {"label": "Área Total Ocupada", "value": "Área Total Ocupada", "disabled": False},
-        #         {"label": "Área Total Construída", "value": "Área Total Construída"},
-        #         {"label": "Valor Total dos Terrenos", "value": "Valor Total dos Terrenos", "disabled": False},
-        #         {"label": "Valor Total das Construções", "value": "Valor Total das Construções", "disabled": False},
-        #         {"label": "CA médio", "value": "CA médio"},
-        #         {"label": "TO médio", "value": "TO médio"},
-        #         {"label": "CA médio em lotes condominiais", "value": "CA médio em lotes condominiais"},
-        #         {"label": "TO médio em lotes condominiais", "value": "TO médio em lotes condominiais"},
-        #         {"label": "CA médio em lotes não condominiais", "value": "CA médio em lotes não condominiais"},
-        #         {"label": "TO médio em lotes não condominiais", "value": "TO médio em lotes não condominiais"},
-        #         {"label": "Comprimento Médio da Testada", "value": "Comprimento Médio da Testada"},
-        #         {"label": "Número médio de Pavimentos", "value": "Número médio de Pavimentos"},
-        #         {"label": "Fator de obsolecência médio", "value": "Fator de obsolecência médio"},
-        #         {"label": "Percentual de Uso Residencial", "value": "Percentual de Uso Residencial"},
-        #         {"label": "Percentual de Uso Comercial", "value": "Percentual de Uso Comercial"},
-        #         {"label": "Percentual de Uso Serviços", "value": "Percentual de Uso Serviços"},
-        #         {"label": "Percentual de Uso Industrial", "value": "Percentual de Uso Industrial"},
-        #         {"label": "Percentual de Uso Outros", "value": "Percentual de Uso Outros"},
-        #     ],
-        #     value='Área Total Construída',
-        #     id="checklist-input"
-        # ),
     ]
 )
 
@@ -173,7 +139,7 @@ app.layout = dbc.Container(
                 '''),
                 dcc.Tabs(id='tab', value='atributo', children=[
                     dcc.Tab(label='Área Total Construída em 2022', value='atributo', id='tab-1'),
-                    dcc.Tab(label='Variação de 1995 à 2022', value='variacao', id='tab-2'),
+                    dcc.Tab(label='Diferença de 1995 à 2022', value='diferenca', id='tab-2'),
                     dcc.Tab(label='Descrição do cálculo/processamento para Área Total Construída', value='descricao', id='tab-3'),
                 ]),
                 dcc.Loading(
@@ -199,23 +165,8 @@ app.layout = dbc.Container(
                 dcc.Download(id="download-gpkg")], width=8
             )]
         ),
-        # dbc.Row(
-        #     dbc.Col(
-        #         [html.H2('Download da série histórica para ...', id="table-title"),
-        #         dash_table.DataTable(
-        #             id='table',
-        #             export_format="csv"
-        #         )]
-        #     )
-        # )
     ])
 
-# @app.callback(
-#     Output("my-output", "children"),
-#     Input("checklist-input", "value")
-# )
-# def update(input_value):
-#     return input_value
 
 
 @app.callback(
@@ -228,8 +179,9 @@ app.layout = dbc.Container(
     Input("dropdown-input", "value"),
     Input("range-slider", "value"),
     Input("radioitems-input", "value"),
+    Input("tab", "value"),
     State('graph', 'figure'))
-def update_map(atributo, ano, agregacao, mapa_atual):
+def update_map(atributo, ano, agregacao, tab, mapa_atual):
 
     if mapa_atual:
         zoom = mapa_atual['layout']['mapbox']['zoom']
@@ -237,32 +189,30 @@ def update_map(atributo, ano, agregacao, mapa_atual):
     else:
         zoom, center = 9, {'lat':-23.62095411, 'lon':-46.61666592}
 
-    # if agregacao == 1:
-    #     gdf_agregacao = gdf_distritos.astype({'ds_codigo': 'int'}).merge(df_iptu_distrito[df_iptu_distrito.ano == ano].to_pandas_df(), left_on='ds_codigo', right_on='distrito')
-    #     hover_data = ["ds_nome"]
-    #     custom_data=["ds_codigo"]
+    gdf_agregacao, hover_data, custom_data, min_max, gdf, gdf_diff, min_max_diff = sel_agregacao(agregacao, ano, atributo)
 
-    # if agregacao == 2:
-    #     gdf_agregacao = gdf_subprefeitura.astype({'sp_codigo': 'int'}).merge(df_iptu_subprefeitura[df_iptu_subprefeitura.ano == ano].to_pandas_df(), left_on='sp_codigo', right_on='subprefeitura')
-    #     hover_data = ["sp_nome"]
-    #     custom_data=["sp_codigo"]
+    if tab == 'atributo':
+        registros = f"{format(gdf_agregacao['Quantidade de Unidades'].sum(), ',d').replace(',', '.')} registros calculados"
+        # Escalas de Cores disponíveis em: https://plotly.com/python/builtin-colorscales/
+        color_continuous_scale='turbo'
+        gdf_map = gdf_agregacao
+        range_color=min_max
+    else:
+        registros = f"{format(gdf['Quantidade de Unidades'].sum(), ',d').replace(',', '.')} registros calculados"
+        color_continuous_scale='rdbu'
+        gdf_map = gdf_diff
+        range_color=min_max_diff
 
-    # if agregacao == 3:
-    #     gdf_agregacao = gdf_od.astype({'od_id': 'int'}).merge(df_iptu_od[df_iptu_od.ano == ano].to_pandas_df(), left_on='od_id', right_on='od')        
-    #     hover_data = ["od_nome"]
-    #     custom_data=["od_id"]
-
-    gdf_agregacao, hover_data, custom_data, min_max = sel_agregacao(agregacao, ano[-1], atributo)
-
-    fig = px.choropleth_mapbox(gdf_agregacao,
-                    geojson=gdf_agregacao.geometry,
+    fig = px.choropleth_mapbox(gdf_map,
+                    geojson=gdf_map.geometry,
+                    color_continuous_scale=color_continuous_scale,
                     zoom=zoom,
                     center=center,
-                    animation_frame='ano',
+                    # animation_frame='ano',
                     #  projection="transverse mercator",
                     color=atributo,
-                    range_color=min_max,
-                    locations=gdf_agregacao.index.to_list(),
+                    range_color=range_color,
+                    locations=gdf_map.index.to_list(),
                     mapbox_style="white-bg",
                     hover_data=hover_data,
                     custom_data=custom_data,
@@ -272,59 +222,63 @@ def update_map(atributo, ano, agregacao, mapa_atual):
                     title={'text': 'Seila'})
 
     loading = None
-
-    registros = f"{format(gdf_agregacao['Quantidade de Unidades'].sum(), ',d').replace(',', '.')} registros calculados"
+    
     tab1 = f"{atributo} em {ano[-1]}"
-    tab2 = f"Variação em {atributo} de {ano[0]} à {ano[-1]}"
+    tab2 = f"Diferença em {atributo} de {ano[0]} à {ano[-1]}"
     tab3 = f"Descrição do cálculo/processamento para {atributo}"
+
+    # print(min_max_diff)
 
     return fig, loading, registros, tab1, tab2, tab3 
 
-# @app.callback(
-#     Output("table", "columns"),
-#     Output("table", "data"), 
-#     Input("checklist-input", "value"))
-# def gen_table(atributo):
-#     df = df_iptu_distrito.to_pandas_df().merge(gdf_distritos.loc[:, ['ds_codigo', 'ds_nome']].astype({'ds_codigo': 'int'}), left_on='distrito', right_on='ds_codigo')
-#     df_pivot = df.pivot(index=['distrito', 'ds_nome'], values=atributo, columns='ano')
-#     columns=[{"name": str(i), "id": str(i)} for i in df_pivot.reset_index().columns]
-#     data=df_pivot.reset_index().to_dict("records")
-#     return columns, data
-
-# @app.callback(
-#     Output("table-title", "children"),
-#     Input("checklist-input", "value"))
-# def change_title(atributo):
-#     return f'Download da série histórica para {atributo} por Distrito'
 
 def sel_agregacao(agregacao, ano, atributo):
 
     if agregacao == 'distritos':
-        gdf_agregacao = gdf_distritos.astype({'ds_codigo': 'int'}).merge(df_iptu_distrito[df_iptu_distrito.ano == ano].to_pandas_df(), left_on='ds_codigo', right_on='distrito')[["ds_codigo", "ds_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
+        gdf = gdf_distritos.astype({'ds_codigo': 'int'})\
+            .merge(df_iptu_distrito[(df_iptu_distrito.ano >= ano[0]) & (df_iptu_distrito.ano <= ano[-1])].to_pandas_df(), \
+                left_on='ds_codigo', right_on='distrito')\
+                    [["ds_codigo", "ds_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
+        gdf_agregacao = gdf.loc[gdf.ano == ano[-1]]
+        diff = gdf.pivot(index='ds_codigo', columns='ano', values=atributo)
+        gdf_diff =  gdf_distritos.astype({'ds_codigo': 'int'}).copy()
+        gdf_diff[atributo] = (diff[ano[-1]] - diff[ano[0]])
         hover_data = ["ds_nome"]
         custom_data=["ds_codigo"]
         min_max = [df_iptu_distrito[atributo].min().item(), df_iptu_distrito[atributo].max().item()]
+        min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
 
     if agregacao == 'subprefeituras':
-        gdf_agregacao = gdf_subprefeitura.astype({'sp_codigo': 'int'}).merge(df_iptu_subprefeitura[df_iptu_subprefeitura.ano == ano].to_pandas_df(), left_on='sp_codigo', right_on='subprefeitura')[["sp_codigo", "sp_nome", atributo, 'geometry', 'ano',  'Quantidade de Unidades']]
+        gdf = gdf_subprefeitura.astype({'sp_codigo': 'int'})\
+            .merge(df_iptu_subprefeitura[(df_iptu_subprefeitura.ano >= ano[0]) & (df_iptu_subprefeitura.ano <= ano[-1])].to_pandas_df(), \
+                left_on='sp_codigo', right_on='subprefeitura')\
+                    [["sp_codigo", "sp_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
+        gdf_agregacao = gdf.loc[gdf.ano == ano[-1]]
+        diff = gdf.pivot(index='sp_codigo', columns='ano', values=atributo)
+        gdf_diff =  gdf_subprefeitura.astype({'sp_codigo': 'int'}).copy()
+        gdf_diff[atributo] = (diff[ano[-1]] - diff[ano[0]])
         hover_data = ["sp_nome"]
         custom_data=["sp_codigo"]
         min_max = [df_iptu_subprefeitura[atributo].min().item(), df_iptu_subprefeitura[atributo].max().item()]
+        min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
 
     if agregacao == 'zonas-od':
-        gdf_agregacao = gdf_od.astype({'od_id': 'int'}).merge(df_iptu_od[df_iptu_od.ano == ano].to_pandas_df(), left_on='od_id', right_on='od')[["od_id", "od_nome", atributo, 'geometry', 'ano',  'Quantidade de Unidades']]        
+        gdf = gdf_od.astype({'od_id': 'int'})\
+            .merge(df_iptu_od[(df_iptu_od.ano >= ano[0]) & (df_iptu_od.ano <= ano[-1])].to_pandas_df(), \
+                left_on='od_id', right_on='od')\
+                    [["od_id", "od_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
+        gdf_agregacao = gdf.loc[gdf.ano == ano[-1]]
+        diff = gdf.pivot(index='od_id', columns='ano', values=atributo)
+        gdf_diff =  gdf_od.astype({'od_id': 'int'}).copy()
+        gdf_diff[atributo] = (diff[ano[-1]] - diff[ano[0]])
+
+        # gdf_agregacao = gdf_od.astype({'od_id': 'int'}).merge(df_iptu_od[df_iptu_od.ano == ano].to_pandas_df(), left_on='od_id', right_on='od')[["od_id", "od_nome", atributo, 'geometry', 'ano',  'Quantidade de Unidades']]        
         hover_data = ["od_nome"]
         custom_data=["od_id"]
         min_max = [df_iptu_od[atributo].min().item(), df_iptu_od[atributo].max().item()]
+        min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
 
-
-    # if agregacao == 'quadras':
-    #     gdf_agregacao = gdf_quadras.merge(df_iptu_sq[df_iptu_sq.ano == ano].to_pandas_df(), left_on='sq', right_on='sq')        
-    #     hover_data = ["sq"]
-    #     custom_data=["sq"]
-    #     min_max = [df_iptu_sq[atributo].min().item(), df_iptu_sq[atributo].max().item()]
-
-    return gdf_agregacao, hover_data, custom_data, min_max
+    return gdf_agregacao, hover_data, custom_data, min_max, gdf, gdf_diff, min_max_diff
 
 @app.callback(
     Output("download-gpkg", "data"),
@@ -336,13 +290,12 @@ def sel_agregacao(agregacao, ano, atributo):
     prevent_initial_call=True,
 )
 def func(n_clicks, atributo, ano, agregacao, tab):
-    # return dict(content="Hello world!", filename="hello.txt")
-    if tab == "variacao":
-        return dict(content=sel_agregacao(agregacao, ano[-1], atributo)[0].to_json(), 
+    if tab == "diferenca":
+        return dict(content=sel_agregacao(agregacao, ano, atributo)[0].to_json(), 
                     filename=f"IPTU-SP-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
     else:
-        return dict(content=sel_agregacao(agregacao, ano[-1], atributo)[0].to_json(), 
-                    filename=f"IPTU-SP-variacao-de-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
+        return dict(content=sel_agregacao(agregacao, ano, atributo)[0].to_json(), 
+                    filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
 
 
 if __name__ == '__main__':
