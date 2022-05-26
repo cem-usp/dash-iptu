@@ -128,23 +128,63 @@ range_slider = html.Div(
     className="ano-exercicio",
 )
 
+como_citar = html.Div(
+    [
+        dbc.Button(
+            "Como Citar",
+            id="positioned-toast-toggle",
+            color="primary",
+            n_clicks=0,
+        ),
+        dbc.Toast(
+            "Aqui em breve informações de como citar este trabalho",
+            id="positioned-toast",
+            header="Como citar o Dash do IPTU",
+            is_open=False,
+            dismissable=True,
+            # top: 66 positions the toast below the navbar
+            style={"position": "fixed", "top": 66, "right": 10, "width": 350},
+        ),
+    ]
+)
+
+navbar = dbc.NavbarSimple(
+    children=[
+        como_citar,
+    ],
+    brand="CEM - Centro de Estudo das Metrópoles - Dash IPTU de São Paulo (1995-2022) - V.0.4.2",
+    brand_href="#",
+    color="#003366",
+    dark=True
+)
+
 app.layout = dbc.Container(
     [
+        navbar,
         dbc.Row(
             dbc.Col(
-                [html.H1("CEM - Centro de Estudo das Metrópoles"),
-                html.H2("Dash IPTU de São Paulo (1995-2022) - V.0.4.2"),
-                dcc.Markdown('''
-                Prova de conceito em fase de pré-testes para validação do uso da série histórica dos dados de IPTU de São Paulo, com mais de 83 milhões de registros, com objetivo de visualização e exportação de dados agregados espacialmente para disseminação de seu uso para diversas disciplinas e finalidades.
-
-                Código disponível em [https://github.com/cem-usp/dash-iptu] comentários, sugestões, inconsistências reportar preferencialmente por `issue` no GitHub ou por email para [feromes@usp.br](mailto:feromes@usp.br)
-                '''),
+                [html.Br(),
                 dcc.Tabs(id='tab', value='atributo', children=[
-                    dcc.Tab(label='Sobre o Dash do IPTU', value='sobre', id='tab-0', disabled=True),
+                    dcc.Tab(label='Sobre o Dash do IPTU', value='sobre', id='tab-0', disabled=False),
                     dcc.Tab(label='Área Total Construída em 2022', value='atributo', id='tab-1'),
                     dcc.Tab(label='Diferença de 1995 à 2022', value='diferenca', id='tab-2'),
                     dcc.Tab(label='Descrição do cálculo/processamento para Área Total Construída', value='descricao', id='tab-3', disabled=True),
                 ]),
+                dbc.Offcanvas(
+                    dcc.Markdown('''
+                        Prova de conceito em fase de pré-testes para validação do uso da série histórica dos dados de IPTU de São Paulo, com mais de 83 milhões de registros, com objetivo de visualização e exportação de dados agregados espacialmente para disseminação de seu uso para diversas disciplinas e finalidades.
+
+                        Código disponível em [https://github.com/cem-usp/dash-iptu] comentários, sugestões, inconsistências reportar preferencialmente por `issue` no GitHub ou por email para [feromes@usp.br](mailto:feromes@usp.br)
+                        '''),
+                    id="offcanvas",
+                    title="Sobre o Dash do IPTU de São Paulo",
+                    is_open=False,
+                    placement='bottom'
+                ),
+          ])
+        ),
+        dbc.Row([
+            dbc.Col([
                 dcc.Loading(
                     id='loading-map',
                     type='default',
@@ -152,9 +192,8 @@ app.layout = dbc.Container(
                     children=html.Div(id='loading-output')
                 ),
                 dbc.Form([range_slider])
-          ]
-            )
-        ),
+            ]),
+        ]),
         dbc.Row([
             dbc.Col(
                 [dbc.Form([radioitems]),
@@ -301,6 +340,27 @@ def func(n_clicks, atributo, ano, agregacao, tab):
         return dict(content=sel_agregacao(agregacao, ano, atributo)[5].to_json(), 
                     filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
 
+@app.callback(
+    Output("offcanvas", "is_open"),
+    Output("tab", "value"),
+    Input("tab", "value"),
+    [State("offcanvas", "is_open")],
+)
+def toggle_offcanvas(n1, is_open):
+    if n1 == 'sobre':
+        return not is_open, "atributo"
+    return is_open, n1
+
+
+
+@app.callback(
+    Output("positioned-toast", "is_open"),
+    [Input("positioned-toast-toggle", "n_clicks")],
+)
+def open_toast(n):
+    if n:
+        return True
+    return False
 
 if __name__ == '__main__':
     # app.run_server(debug=True)
