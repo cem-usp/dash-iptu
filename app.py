@@ -152,7 +152,7 @@ navbar = dbc.NavbarSimple(
     children=[
         como_citar,
     ],
-    brand="CEM - Centro de Estudo das Metrópoles - Dash IPTU de São Paulo (1995-2022) - V.0.4.2",
+    brand="CEM - Centro de Estudo das Metrópoles - Dash IPTU de São Paulo (1995-2022) - V.0.4.3",
     brand_href="#",
     color="#003366",
     dark=True
@@ -237,17 +237,22 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
         registros = f"{format(gdf_agregacao['Quantidade de Unidades'].sum(), ',d').replace(',', '.')} registros calculados"
         # Escalas de Cores disponíveis em: https://plotly.com/python/builtin-colorscales/
         color_continuous_scale='turbo'
+        # color_continuous_midpoint = (min_max[1] - min_max[0])/2
         gdf_map = gdf_agregacao
         range_color=min_max
     else:
         registros = f"{format(gdf['Quantidade de Unidades'].sum(), ',d').replace(',', '.')} registros calculados"
-        color_continuous_scale='rdbu'
+        color_continuous_scale='RdYlBu'
+        print(min_max_diff)
+        color_continuous_midpoint = 0.0
+        # color_continuous_midpoint = (min_max[1] - min_max[0])/2
         gdf_map = gdf_diff
         range_color=min_max_diff
 
     fig = px.choropleth_mapbox(gdf_map,
                     geojson=gdf_map.geometry,
                     color_continuous_scale=color_continuous_scale,
+                    # color_continuous_midpoint=color_continuous_midpoint,
                     zoom=zoom,
                     center=center,
                     # animation_frame='ano',
@@ -289,7 +294,7 @@ def sel_agregacao(agregacao, ano, atributo):
         hover_data = ["ds_nome"]
         custom_data=["ds_codigo"]
         min_max = [df_iptu_distrito[atributo].min().item(), df_iptu_distrito[atributo].max().item()]
-        min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
+        # min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
 
     if agregacao == 'subprefeituras':
         gdf = gdf_subprefeitura.astype({'sp_codigo': 'int'})\
@@ -304,7 +309,7 @@ def sel_agregacao(agregacao, ano, atributo):
         hover_data = ["sp_nome"]
         custom_data=["sp_codigo"]
         min_max = [df_iptu_subprefeitura[atributo].min().item(), df_iptu_subprefeitura[atributo].max().item()]
-        min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
+        # min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
 
     if agregacao == 'zonas-od':
         gdf = gdf_od.astype({'od_id': 'int'})\
@@ -319,7 +324,10 @@ def sel_agregacao(agregacao, ano, atributo):
         hover_data = ["od_nome"]
         custom_data=["od_id"]
         min_max = [df_iptu_od[atributo].min().item(), df_iptu_od[atributo].max().item()]
-        min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
+    
+    max_value = abs(max([gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()], key=abs))
+    min_max_diff = [-1 * max_value, max_value]
+    # min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
 
     return gdf_agregacao, hover_data, custom_data, min_max, gdf, gdf_diff, min_max_diff
 
