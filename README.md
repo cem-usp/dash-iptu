@@ -27,4 +27,4 @@ docker run -p 8050:8050 -d dash-iptu
 
 ## Resultados
 
-Ambiente de testes disponível em [http://dash-iptu.freeddns.org:8050/dash-iptu/]
+Ambiente de testes disponível em [https://dashiptu.centrodametropole.fflch.usp.br]
