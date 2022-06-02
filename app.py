@@ -40,7 +40,7 @@ gdf_subprefeitura.to_crs(epsg=4674, inplace=True)
 # gdf_quadras = gpd.read_file('data/quadras.gpkg')
 # gdf_quadras.to_crs(epsg=4674, inplace=True)
 
-routes_pathname_prefix='/dash-iptu/'
+# routes_pathname_prefix='/dash-iptu/'
 
 # if 'DASH_ENV' in os.environ: 
 #     if os.environ['DASH_ENV'] == 'production':
@@ -51,11 +51,11 @@ app = dash.Dash(__name__,
     # as the proxy server will remove the prefix
     ## TODO IF PRODUCTION
     # routes_pathname_prefix='/',
-    routes_pathname_prefix=routes_pathname_prefix,
+    # routes_pathname_prefix=routes_pathname_prefix,
 
     # the front-end will prefix this string to the requests
     # that are made to the proxy server
-    requests_pathname_prefix='/dash-iptu/'
+    # requests_pathname_prefix='/dash-iptu/'
 )
 
 server = app.server
@@ -174,7 +174,7 @@ app.layout = dbc.Container(
                     dcc.Markdown('''
                         Prova de conceito em fase de pré-testes para validação do uso da série histórica dos dados de IPTU de São Paulo, com mais de 83 milhões de registros, com objetivo de visualização e exportação de dados agregados espacialmente para disseminação de seu uso para diversas disciplinas e finalidades.
 
-                        Código disponível em [https://github.com/cem-usp/dash-iptu] comentários, sugestões, inconsistências reportar preferencialmente por `issue` no GitHub ou por email para [feromes@usp.br](mailto:feromes@usp.br)
+                        Código disponível em [https://dashiptu.centrodametropole.fflch.usp.br/] comentários, sugestões, inconsistências reportar preferencialmente por `issue` no GitHub ou por email para [feromes@usp.br](mailto:feromes@usp.br)
                         '''),
                     id="offcanvas",
                     title="Sobre o Dash do IPTU de São Paulo",
