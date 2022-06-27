@@ -1,3 +1,6 @@
 data/IPTU_*
 data/SIRGAS_SHP_quadraMDSF.zip
 ssl/*
+data/lotes
+data/IPTU-HDF5
+data/*.pkl
