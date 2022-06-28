@@ -6,3 +6,4 @@ data/IPTU-HDF5
 data/*.pkl
 tmp/*
 lotes_agregados_por_ano/atributo_de_data
+data/IPTU-1995-2022-agrupados-por-sq.hdf5
