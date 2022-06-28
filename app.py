@@ -18,6 +18,7 @@ import os
 df_iptu_distrito = vaex.open('data/IPTU-1995-2022-agrupados-por-distrito.hdf5')
 df_iptu_subprefeitura = vaex.open('data/IPTU-1995-2022-agrupados-por-subprefeitura.hdf5')
 df_iptu_od = vaex.open('data/IPTU-1995-2022-agrupados-por-od.hdf5')
+df_iptu_censo = vaex.open('data/IPTU-1995-2022-agrupados-por-censo.hdf5')
 # df_iptu_sq = vaex.open('data/IPTU-1995-2022-agrupados-por-sq.hdf5')
 
 gdf_distritos = gpd.read_file('data/SIRGAS_GPKG_distrito.gpkg')
@@ -36,6 +37,11 @@ gdf_subprefeitura = gpd.read_file('zip://data/SIRGAS_GPKG_subprefeitura.zip!SIRG
 gdf_subprefeitura['area'] = gdf_subprefeitura.area
 gdf_subprefeitura.geometry = gdf_subprefeitura.simplify(tolerance=100)
 gdf_subprefeitura.to_crs(epsg=4674, inplace=True)
+
+gdf_censo = gpd.read_file('data/areas-ponderacao-censo.gpkg', layer='areas-ponderacao-censo-2010')
+gdf_censo['area'] = gdf_censo.area
+gdf_censo.geometry = gdf_censo.simplify(tolerance=100)
+gdf_censo.to_crs(epsg=4674, inplace=True)
 
 # gdf_quadras = gpd.read_file('data/quadras.gpkg')
 # gdf_quadras.to_crs(epsg=4674, inplace=True)
@@ -70,9 +76,9 @@ radioitems = html.Div(
                 {"label": "Subprefeituras", "value": 'subprefeituras', "disabled": False},
                 {"label": "Distritos", "value": 'distritos'},
                 {"label": "Zonas OD", "value": 'zonas-od', "disabled": False},
-                {"label": "Macroáreas PDE", "value": 'macro-areas', "disabled": True},
-                {"label": "Quadras", "value": 'quadras', "disabled": True},
-                
+                {"label": "Macroáreas PDE(2014)", "value": 'macro-areas', "disabled": True},
+                {"label": "Áreas de Ponderação do CENSO(2010)", "value": 'censo', "disabled": False},
+                {"label": "Quadras/Lotes Fiscais", "value": 'quadras', "disabled": True},
             ],
             value='distritos',
             id="radioitems-input"
@@ -325,6 +331,20 @@ def sel_agregacao(agregacao, ano, atributo):
         custom_data=["od_id"]
         min_max = [df_iptu_od[atributo].min().item(), df_iptu_od[atributo].max().item()]
     
+    if agregacao == 'censo':
+        gdf = gdf_censo.astype({'COD_AED_S': 'int'})\
+            .merge(df_iptu_censo[(df_iptu_censo.ano >= ano[0]) & (df_iptu_censo.ano <= ano[-1])].to_pandas_df(), \
+                left_on='COD_AED_S', right_on='censo')\
+                    [["COD_AED_S", "COD_AED", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
+        gdf_agregacao = gdf.loc[gdf.ano == ano[-1]]
+        diff = gdf.pivot(index='COD_AED_S', columns='ano', values=atributo)
+        gdf_diff = gdf_censo.astype({'COD_AED_S': 'int'}).set_index('COD_AED_S').merge(diff, left_index=True, right_index=True, how='left')
+        gdf_diff.loc[:, atributo] = (gdf_diff[ano[-1]] - gdf_diff[ano[0]])
+        gdf_agregacao.set_index('COD_AED_S', inplace=True)
+        hover_data = ["COD_AED"]
+        custom_data=["COD_AED_S"]
+        min_max = [df_iptu_censo[atributo].min().item(), df_iptu_censo[atributo].max().item()]
+
     max_value = abs(max([gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()], key=abs))
     min_max_diff = [-1 * max_value, max_value]
     # min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
@@ -341,12 +361,12 @@ def sel_agregacao(agregacao, ano, atributo):
     prevent_initial_call=True,
 )
 def func(n_clicks, atributo, ano, agregacao, tab):
-    if tab == "diferenca":
+    if tab != "diferenca":
         return dict(content=sel_agregacao(agregacao, ano, atributo)[0].to_json(), 
                     filename=f"IPTU-SP-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
     else:
         return dict(content=sel_agregacao(agregacao, ano, atributo)[5].to_json(), 
-                    filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
+                    filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-{agregacao}.geojson")
 
 @app.callback(
     Output("offcanvas", "is_open"),
