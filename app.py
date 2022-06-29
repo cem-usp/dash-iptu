@@ -19,7 +19,7 @@ df_iptu_distrito = vaex.open('data/IPTU-1995-2022-agrupados-por-distrito.hdf5')
 df_iptu_subprefeitura = vaex.open('data/IPTU-1995-2022-agrupados-por-subprefeitura.hdf5')
 df_iptu_od = vaex.open('data/IPTU-1995-2022-agrupados-por-od.hdf5')
 df_iptu_censo = vaex.open('data/IPTU-1995-2022-agrupados-por-censo.hdf5')
-# df_iptu_sq = vaex.open('data/IPTU-1995-2022-agrupados-por-sq.hdf5')
+df_iptu_sq = vaex.open('data/IPTU-1995-2022-agrupados-por-sq.hdf5')
 
 gdf_distritos = gpd.read_file('data/SIRGAS_GPKG_distrito.gpkg')
 gdf_distritos['area'] = gdf_distritos.area
@@ -43,8 +43,10 @@ gdf_censo['area'] = gdf_censo.area
 gdf_censo.geometry = gdf_censo.simplify(tolerance=100)
 gdf_censo.to_crs(epsg=4674, inplace=True)
 
-# gdf_quadras = gpd.read_file('data/quadras.gpkg')
+gdf_quadras = gpd.read_file('data/quadras.gpkg')
 # gdf_quadras.to_crs(epsg=4674, inplace=True)
+
+distritos_items = [{"label": d.ds_nome, "value": d.ds_codigo} for i, d in gdf_distritos.sort_values('ds_nome').iterrows()]
 
 # routes_pathname_prefix='/dash-iptu/'
 
@@ -78,7 +80,6 @@ radioitems = html.Div(
                 {"label": "Zonas OD", "value": 'zonas-od', "disabled": False},
                 {"label": "Macroáreas PDE(2014)", "value": 'macro-areas', "disabled": True},
                 {"label": "Áreas de Ponderação do CENSO(2010)", "value": 'censo', "disabled": False},
-                {"label": "Quadras/Lotes Fiscais", "value": 'quadras', "disabled": True},
             ],
             value='distritos',
             id="radioitems-input"
@@ -113,6 +114,7 @@ atributos = [
 
 checklist = html.Div(
     [
+        html.Hr(),
         dbc.Label("Selecione as totalizações, índices ou Quantitativos"),
         dcc.Dropdown(atributos, "Área Total Construída", id='dropdown-input', clearable=False),
     ]
@@ -206,11 +208,27 @@ app.layout = dbc.Container(
                 dbc.Form([checklist]),
                 html.Br(),
                 dbc.Button('Download', id='download-button', n_clicks=0),
-                html.Br()]
+                html.Hr(),
+                html.P("Para agregações menores, selecione o distrito abaixo e escolha a opção"),
+                dbc.Select(
+                    id='download_por_lotes',
+                    options=distritos_items,
+                    value=1
+                ),
+                html.Br(),
+                dbc.DropdownMenu(
+                    label="Download",
+                    children=[
+                        dbc.DropdownMenuItem(".. por Quadras", id='download-button-quadra', n_clicks=0),
+                        dbc.DropdownMenuItem(".. por Lotes", id='download-button-lotes', n_clicks=0)
+                    ],
+                )]
             ),
             dbc.Col(
                 [dcc.Graph(id="graph"),
-                dcc.Download(id="download-gpkg")], width=8
+                dcc.Download(id="download-gpkg"),
+                dcc.Download(id="download-quadras"),
+                dcc.Download(id="download-lotes")], width=8
             )]
         ),
     ])
@@ -285,7 +303,7 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
     return fig, loading, registros, tab1, tab2, tab3 
 
 
-def sel_agregacao(agregacao, ano, atributo):
+def sel_agregacao(agregacao, ano, atributo, distrito=90):
 
     if agregacao == 'distritos':
         gdf = gdf_distritos.astype({'ds_codigo': 'int'})\
@@ -367,6 +385,34 @@ def func(n_clicks, atributo, ano, agregacao, tab):
     else:
         return dict(content=sel_agregacao(agregacao, ano, atributo)[5].to_json(), 
                     filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-{agregacao}.geojson")
+
+## Download dados agregados por quadra
+@app.callback(
+    Output("download-quadras", "data"),
+    Input("download-button-quadra", "n_clicks"),
+    State("dropdown-input", "value"),
+    State("range-slider", "value"),
+    State("radioitems-input", "value"),
+    State("tab", "value"),
+    State("download_por_lotes", "value"),
+    prevent_initial_call=True,
+)
+def func(n_clicks, atributo, ano, agregacao, tab, download_por_lotes):
+    distrito = gdf_distritos[gdf_distritos.ds_codigo == download_por_lotes].iloc[0]
+    quadras = gdf_quadras[gdf_quadras.ds_codigo == download_por_lotes]
+    quadras = quadras.set_index('sq').join(df_iptu_sq[df_iptu_sq.ano == int(ano[-1])].to_pandas_df().set_index('sq'))
+    quadras.set_crs(epsg=31983, inplace=True)
+
+    return dict(content=quadras.to_json(), 
+            filename=f"IPTU-SP-{atributo.replace(' ','-')}-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson")
+    
+    # if tab != "diferenca":
+    #     return dict(content=sel_agregacao(agregacao, ano, atributo)[0].to_json(), 
+    #                 filename=f"IPTU-SP-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
+    # else:
+    #     return dict(content=sel_agregacao(agregacao, ano, atributo)[5].to_json(), 
+    #                 filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-{agregacao}.geojson")
+
 
 @app.callback(
     Output("offcanvas", "is_open"),
