@@ -4,11 +4,12 @@
 # from cgitb import enable
 # from faulthandler import disable
 from cgitb import enable
+from email import header
 from faulthandler import disable
 from certifi import contents
 import geopandas as gpd
 import pandas as pd
-from dash import Dash, html, dcc, Input, Output, State, dash_table
+from dash import Dash, html, dcc, Input, Output, State, dash_table, callback_context
 import dash
 import dash_bootstrap_components as dbc
 import plotly.express as px
@@ -44,7 +45,7 @@ gdf_censo.geometry = gdf_censo.simplify(tolerance=100)
 gdf_censo.to_crs(epsg=4674, inplace=True)
 
 gdf_quadras = gpd.read_file('data/quadras.gpkg')
-# gdf_quadras.to_crs(epsg=4674, inplace=True)
+gdf_quadras.to_crs(epsg=4674, inplace=True)
 
 distritos_items = [{"label": d.ds_nome, "value": d.ds_codigo} for i, d in gdf_distritos.sort_values('ds_nome').iterrows()]
 
@@ -212,8 +213,7 @@ app.layout = dbc.Container(
                 html.P("Para agregações menores, selecione o distrito abaixo e escolha a opção"),
                 dbc.Select(
                     id='download_por_lotes',
-                    options=distritos_items,
-                    value=1
+                    options=distritos_items
                 ),
                 html.Br(),
                 dbc.DropdownMenu(
@@ -267,7 +267,6 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
     else:
         registros = f"{format(gdf['Quantidade de Unidades'].sum(), ',d').replace(',', '.')} registros calculados"
         color_continuous_scale='RdYlBu'
-        print(min_max_diff)
         color_continuous_midpoint = 0.0
         # color_continuous_midpoint = (min_max[1] - min_max[0])/2
         gdf_map = gdf_diff
@@ -390,6 +389,7 @@ def func(n_clicks, atributo, ano, agregacao, tab):
 @app.callback(
     Output("download-quadras", "data"),
     Input("download-button-quadra", "n_clicks"),
+    Input("download-button-lotes", "n_clicks"),
     State("dropdown-input", "value"),
     State("range-slider", "value"),
     State("radioitems-input", "value"),
@@ -397,21 +397,30 @@ def func(n_clicks, atributo, ano, agregacao, tab):
     State("download_por_lotes", "value"),
     prevent_initial_call=True,
 )
-def func(n_clicks, atributo, ano, agregacao, tab, download_por_lotes):
+def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
+    # print(quadra, lotes)
+    # print(callback_context.triggered)
     distrito = gdf_distritos[gdf_distritos.ds_codigo == download_por_lotes].iloc[0]
     quadras = gdf_quadras[gdf_quadras.ds_codigo == download_por_lotes]
-    quadras = quadras.set_index('sq').join(df_iptu_sq[df_iptu_sq.ano == int(ano[-1])].to_pandas_df().set_index('sq'))
-    quadras.set_crs(epsg=31983, inplace=True)
 
-    return dict(content=quadras.to_json(), 
-            filename=f"IPTU-SP-{atributo.replace(' ','-')}-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson")
-    
-    # if tab != "diferenca":
-    #     return dict(content=sel_agregacao(agregacao, ano, atributo)[0].to_json(), 
-    #                 filename=f"IPTU-SP-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
-    # else:
-    #     return dict(content=sel_agregacao(agregacao, ano, atributo)[5].to_json(), 
-    #                 filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-{agregacao}.geojson")
+    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+
+    if 'download-button-quadra' in changed_id:    
+        if tab != "diferenca":
+            quadras = quadras.set_index('sq').join(df_iptu_sq[df_iptu_sq.ano == int(ano[-1])].to_pandas_df().set_index('sq'))
+            # quadras.set_crs(epsg=31983, inplace=True)
+
+            return dict(content=quadras.to_json(), 
+                    filename=f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson")
+        else:
+            quadras = quadras.set_index('sq').join(df_iptu_sq[(df_iptu_sq.ano >= ano[0]) & (df_iptu_sq.ano <= ano[-1])][['sq', 'ano', atributo]].to_pandas_df().pivot(index='sq', columns='ano', values=atributo))
+            # quadras.set_crs(epsg=31983, inplace=True)
+
+            return dict(content=quadras.to_json(), 
+                        filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson")
+
+    if 'download-button-lotes' in changed_id:
+        print('lotes')
 
 
 @app.callback(
