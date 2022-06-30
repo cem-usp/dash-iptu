@@ -200,6 +200,12 @@ app.layout = dbc.Container(
                     # fullscreen=True,
                     children=html.Div(id='loading-output')
                 ),
+                dcc.Loading(
+                    id='downloading',
+                    type='default',
+                    fullscreen=True,
+                    children=html.Div(id='downloading-output')
+                ),
                 dbc.Form([range_slider])
             ]),
         ]),
@@ -388,6 +394,7 @@ def func(n_clicks, atributo, ano, agregacao, tab):
 ## Download dados agregados por quadra
 @app.callback(
     Output("download-quadras", "data"),
+    Output("downloading", "children"),
     Input("download-button-quadra", "n_clicks"),
     Input("download-button-lotes", "n_clicks"),
     State("dropdown-input", "value"),
@@ -411,16 +418,85 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
             # quadras.set_crs(epsg=31983, inplace=True)
 
             return dict(content=quadras.to_json(), 
-                    filename=f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson")
+                    filename=f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
         else:
             quadras = quadras.set_index('sq').join(df_iptu_sq[(df_iptu_sq.ano >= ano[0]) & (df_iptu_sq.ano <= ano[-1])][['sq', 'ano', atributo]].to_pandas_df().pivot(index='sq', columns='ano', values=atributo))
             # quadras.set_crs(epsg=31983, inplace=True)
 
             return dict(content=quadras.to_json(), 
-                        filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson")
+                        filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
 
     if 'download-button-lotes' in changed_id:
+
+        agg_atributos = {'ano':'first',
+            'Quantidade de Unidades':'sum',
+            'Quantidade de Unidades Condominiais':'sum',
+            'Tamanho Médio da Unidade Condominial':'mean',
+            'Tamanho médio dos Terrenos':'mean',
+            'Área Total dos terrenos-lotes':'sum',
+            'Área Total Ocupada':'sum',
+            'Área Total Construída':'sum',
+            'Valor Total dos Terrenos':'sum',
+            'Valor Total das Construções':'sum',
+            'CA médio':'mean',
+            'TO médio':'mean',
+            'CA médio em lotes condominiais':'mean',
+            'TO médio em lotes condominiais':'mean',
+            'CA médio em lotes não condominiais':'mean',
+            'TO médio em lotes não condominiais':'mean',
+            'Comprimento Médio da Testada':'mean',
+            'Número médio de Pavimentos':'mean',
+            'Fator de obsolecência médio':'mean',
+            'Residencial':'mean',
+            'Comercial':'mean',
+            'Serviços':'mean',
+            'Industrial':'mean',
+            'Outros':'mean',
+            'Percentual de Uso Residencial':'mean',
+            'Percentual de Uso Comercial':'mean',
+            'Percentual de Uso Serviços':'mean',
+            'Percentual de Uso Industrial':'mean',
+            'Percentual de Uso Outros':'mean'}
+
         print('lotes')
+        
+        # Abrindo Arquivo de lotes
+        path = f'lotes_agregados_por_ano/{ano[0]}/SIRGAS_SHP_LOTES_{distrito.ds_codigo.rjust(2, "0")}_{distrito.ds_nome.replace(" ", "_")}_IPTU_{ano[0]}.gpkg'
+        gdf_lote = gpd.read_file(path).drop_duplicates(subset=['sqlc']).set_index('sqlc')
+        gdf_lote.to_crs(epsg=4674, inplace=True)
+        gdf_lote = gdf_lote[gdf_lote.is_valid]
+
+        # Abrindo arquivo com os dados agregados de IPTU por lote (SQLC)
+        df_iptu = vaex.open(f'data/por_distritos/IPTU-1995-2022-agrupados-por-sqlc-{distrito.ds_codigo}-{distrito.ds_nome.replace(" ", "-").lower()}.hdf5').to_pandas_df().set_index('sqlc')
+
+        if tab != "diferenca":
+            df_iptu = df_iptu[df_iptu.ano == ano[-1]][[atributo]]
+            lotes_existentes = gdf_lote.join(df_iptu, how='inner')
+            lotes_sg = df_iptu.join(gdf_lote, how='left').sq.isna()
+            df_lotes_sg = df_iptu[lotes_sg].reset_index()
+            df_lotes_sg.sqlc = df_lotes_sg.sqlc.str[:6] + '000000'
+            df_lotes_sg_group = df_lotes_sg.groupby('sqlc').agg(agg_atributos[atributo])
+            # Agora com as geometrias
+            ### TODO
+            ## Verificar pois parecem que nem todos os lotes estão vindo
+            lotes_agregados = gdf_lote.join(df_lotes_sg_group, how='inner')
+            lotes = pd.concat([lotes_existentes, lotes_agregados])
+
+            return dict(content=lotes.to_json(), 
+                    filename=f"IPTU-SP-{atributo.replace(' ','-')}-{ano[-1]}-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
+        else:
+            df_iptu = df_iptu[(df_iptu.ano >= ano[0]) & (df_iptu.ano <= ano[-1])][['ano', atributo]].reset_index().pivot(index='sqlc', columns='ano', values=atributo)
+            lotes_existentes = gdf_lote.join(df_iptu, how='inner')
+            lotes_sg = df_iptu.join(gdf_lote, how='left').sq.isna()
+            df_lotes_sg = df_iptu[lotes_sg].reset_index()
+            df_lotes_sg.sqlc = df_lotes_sg.sqlc.str[:6] + '000000'
+            df_lotes_sg_group = df_lotes_sg.groupby('sqlc').agg(agg_atributos[atributo])
+            # Agora com as geometrias
+            lotes_agregados = gdf_lote.join(df_lotes_sg_group, how='inner')
+            lotes = pd.concat([lotes_existentes, lotes_agregados])
+
+            return dict(content=lotes.to_json(), 
+                    filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
 
 
 @app.callback(
