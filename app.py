@@ -78,7 +78,7 @@ radioitems = html.Div(
             options=[
                 {"label": "Subprefeituras", "value": 'subprefeituras', "disabled": False},
                 {"label": "Distritos", "value": 'distritos'},
-                {"label": "Zonas OD", "value": 'zonas-od', "disabled": False},
+                {"label": "Zonas OD (2017)", "value": 'zonas-od', "disabled": False},
                 {"label": "Macroáreas PDE(2014)", "value": 'macro-areas', "disabled": True},
                 {"label": "Áreas de Ponderação do CENSO(2010)", "value": 'censo', "disabled": False},
             ],
@@ -88,36 +88,85 @@ radioitems = html.Div(
     ]
 )
 
+# atributos = [
+#     "Quantidade de Unidades Condominiais",
+#     "Tamanho Médio da Unidade Condominial",
+#     "Tamanho médio dos Terrenos",
+#     "Área Total dos terrenos-lotes",
+#     "Área Total Ocupada",
+#     "Área Total Construída",
+#     "Valor Total dos Terrenos",
+#     "Valor Total das Construções",
+#     "CA médio",
+#     "TO médio",
+#     "CA médio em lotes condominiais",
+#     "TO médio em lotes condominiais",
+#     "CA médio em lotes não condominiais",
+#     "TO médio em lotes não condominiais",
+#     "Comprimento Médio da Testada",
+#     "Número médio de Pavimentos",
+#     "Fator de obsolecência médio",
+#     "Percentual de Uso Residencial",
+#     "Percentual de Uso Comercial",
+#     "Percentual de Uso Serviços",
+#     "Percentual de Uso Industrial",
+#     "Percentual de Uso Outros"
+# ]
+
 atributos = [
-    "Quantidade de Unidades Condominiais",
-    "Tamanho Médio da Unidade Condominial",
-    "Tamanho médio dos Terrenos",
-    "Área Total dos terrenos-lotes",
-    "Área Total Ocupada",
-    "Área Total Construída",
-    "Valor Total dos Terrenos",
-    "Valor Total das Construções",
-    "CA médio",
-    "TO médio",
-    "CA médio em lotes condominiais",
-    "TO médio em lotes condominiais",
-    "CA médio em lotes não condominiais",
-    "TO médio em lotes não condominiais",
-    "Comprimento Médio da Testada",
-    "Número médio de Pavimentos",
-    "Fator de obsolecência médio",
-    "Percentual de Uso Residencial",
-    "Percentual de Uso Comercial",
-    "Percentual de Uso Serviços",
-    "Percentual de Uso Industrial",
-    "Percentual de Uso Outros"
+    'Quantidade de Unidades',
+    'Quantidade de Unidades Condominiais',
+    'Tamanho Médio da Unidade Condominial',
+    'Tamanho médio dos Terrenos',
+    'Área Total dos terrenos-lotes',
+    'Área Total Ocupada',
+    'Área Total Construída',
+    'Valor Total dos Terrenos',
+    'Valor Total das Construções',
+    'CA médio',
+    'TO médio',
+    'CA médio em lotes condominiais',
+    'TO médio em lotes condominiais',
+    'CA médio em lotes não condominiais',
+    'TO médio em lotes não condominiais',
+    'Comprimento Médio da Testada',
+    'Número médio de Pavimentos',
+    'Fator de obsolecência médio',
+    'Residencial vertical Baixo (m2)',
+    'Residencial vertical Médio (m2)',
+    'Residencial vertical Alto (m2)',
+    'Residencial horizontal Baixo (m2)',
+    'Residencial horizontal Médio (m2)',
+    'Residencial horizontal Alto (m2)',
+    'Comercial vertical Baixo (m2)',
+    'Comercial vertical Médio (m2)',
+    'Comercial vertical Alto (m2)',
+    'Comercial horizontal Baixo (m2)',
+    'Comercial horizontal Alto (m2)',
+    'Comercial horizontal Médio (m2)',
+    'Terreno (m2)',
+    'Outros Usos (m2)',
+    'Residencial vertical Baixo (qt)',
+    'Residencial vertical Médio (qt)',
+    'Residencial vertical Alto (qt)',
+    'Residencial horizontal Baixo (qt)',
+    'Residencial horizontal Médio (qt)',
+    'Residencial horizontal Alto (qt)',
+    'Comercial vertical Baixo (qt)',
+    'Comercial vertical Médio (qt)',
+    'Comercial vertical Alto (qt)',
+    'Comercial horizontal Baixo (qt)',
+    'Comercial horizontal Alto (qt)',
+    'Comercial horizontal Médio (qt)',
+    'Terreno (qt)',
+    'Outros Usos (qt)'
 ]
 
 checklist = html.Div(
     [
         html.Hr(),
         dbc.Label("Selecione as totalizações, índices ou Quantitativos"),
-        dcc.Dropdown(atributos, "Área Total Construída", id='dropdown-input', clearable=False),
+        dcc.Dropdown(atributos, 'Área Total Construída', id='dropdown-input', clearable=False),
     ]
 )
 
@@ -261,7 +310,7 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
     else:
         zoom, center = 9, {'lat':-23.62095411, 'lon':-46.61666592}
 
-    gdf_agregacao, hover_data, custom_data, min_max, gdf, gdf_diff, min_max_diff = sel_agregacao(agregacao, ano, atributo)
+    gdf_agregacao, hover_data, custom_data, min_max, gdf, gdf_diff, min_max_diff, gdf_total = sel_agregacao(agregacao, ano, atributo)
 
     if tab == 'atributo':
         registros = f"{format(gdf_agregacao['Quantidade de Unidades'].sum(), ',d').replace(',', '.')} registros calculados"
@@ -313,9 +362,9 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
     if agregacao == 'distritos':
         gdf = gdf_distritos.astype({'ds_codigo': 'int'})\
             .merge(df_iptu_distrito[(df_iptu_distrito.ano >= ano[0]) & (df_iptu_distrito.ano <= ano[-1])].to_pandas_df(), \
-                left_on='ds_codigo', right_on='distrito')\
-                    [["ds_codigo", "ds_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
-        gdf_agregacao = gdf.loc[gdf.ano == ano[-1]]
+                left_on='ds_codigo', right_on='distrito')#\
+                    # [["ds_codigo", "ds_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
+        gdf_agregacao = gdf.loc[gdf.ano == ano[-1], ["ds_codigo", "ds_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         diff = gdf.pivot(index='ds_codigo', columns='ano', values=atributo)
         gdf_diff = gdf_distritos.astype({'ds_codigo': 'int'}).set_index('ds_codigo').merge(diff, left_index=True, right_index=True, how='left')
         gdf_diff.loc[:, atributo] = (gdf_diff[ano[-1]] - gdf_diff[ano[0]])
@@ -328,9 +377,9 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
     if agregacao == 'subprefeituras':
         gdf = gdf_subprefeitura.astype({'sp_codigo': 'int'})\
             .merge(df_iptu_subprefeitura[(df_iptu_subprefeitura.ano >= ano[0]) & (df_iptu_subprefeitura.ano <= ano[-1])].to_pandas_df(), \
-                left_on='sp_codigo', right_on='subprefeitura')\
-                    [["sp_codigo", "sp_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
-        gdf_agregacao = gdf.loc[gdf.ano == ano[-1]]
+                left_on='sp_codigo', right_on='subprefeitura')#\
+                    # [["sp_codigo", "sp_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
+        gdf_agregacao = gdf.loc[gdf.ano == ano[-1], ["sp_codigo", "sp_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         diff = gdf.pivot(index='sp_codigo', columns='ano', values=atributo)
         gdf_diff = gdf_subprefeitura.astype({'sp_codigo': 'int'}).set_index('sp_codigo').merge(diff, left_index=True, right_index=True, how='left')
         gdf_diff.loc[:, atributo] = (gdf_diff[ano[-1]] - gdf_diff[ano[0]])
@@ -343,9 +392,9 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
     if agregacao == 'zonas-od':
         gdf = gdf_od.astype({'od_id': 'int'})\
             .merge(df_iptu_od[(df_iptu_od.ano >= ano[0]) & (df_iptu_od.ano <= ano[-1])].to_pandas_df(), \
-                left_on='od_id', right_on='od')\
-                    [["od_id", "od_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
-        gdf_agregacao = gdf.loc[gdf.ano == ano[-1]]
+                left_on='od_id', right_on='od')#\
+                    # [["od_id", "od_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
+        gdf_agregacao = gdf.loc[gdf.ano == ano[-1], ["od_id", "od_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         diff = gdf.pivot(index='od_id', columns='ano', values=atributo)
         gdf_diff = gdf_od.astype({'od_id': 'int'}).set_index('od_id').merge(diff, left_index=True, right_index=True, how='left')
         gdf_diff.loc[:, atributo] = (gdf_diff[ano[-1]] - gdf_diff[ano[0]])
@@ -357,9 +406,9 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
     if agregacao == 'censo':
         gdf = gdf_censo.astype({'COD_AED_S': 'int'})\
             .merge(df_iptu_censo[(df_iptu_censo.ano >= ano[0]) & (df_iptu_censo.ano <= ano[-1])].to_pandas_df(), \
-                left_on='COD_AED_S', right_on='censo')\
-                    [["COD_AED_S", "COD_AED", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
-        gdf_agregacao = gdf.loc[gdf.ano == ano[-1]]
+                left_on='COD_AED_S', right_on='censo')#\
+                    # [["COD_AED_S", "COD_AED", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
+        gdf_agregacao = gdf.loc[gdf.ano == ano[-1], ["COD_AED_S", "COD_AED", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         diff = gdf.pivot(index='COD_AED_S', columns='ano', values=atributo)
         gdf_diff = gdf_censo.astype({'COD_AED_S': 'int'}).set_index('COD_AED_S').merge(diff, left_index=True, right_index=True, how='left')
         gdf_diff.loc[:, atributo] = (gdf_diff[ano[-1]] - gdf_diff[ano[0]])
@@ -370,9 +419,10 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
 
     max_value = abs(max([gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()], key=abs))
     min_max_diff = [-1 * max_value, max_value]
+    gdf_total = gdf.loc[gdf.ano == ano[-1], :]
     # min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
 
-    return gdf_agregacao, hover_data, custom_data, min_max, gdf, gdf_diff, min_max_diff
+    return gdf_agregacao, hover_data, custom_data, min_max, gdf, gdf_diff, min_max_diff, gdf_total
 
 @app.callback(
     Output("download-gpkg", "data"),
@@ -385,8 +435,8 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
 )
 def func(n_clicks, atributo, ano, agregacao, tab):
     if tab != "diferenca":
-        return dict(content=sel_agregacao(agregacao, ano, atributo)[0].to_json(), 
-                    filename=f"IPTU-SP-{atributo.replace(' ','-')}-{ano[-1]}-por-{agregacao}.geojson")
+        return dict(content=sel_agregacao(agregacao, ano, atributo)[7].to_json(), 
+                    filename=f"IPTU-SP-todos-atributos-{ano[-1]}-por-{agregacao}.geojson")
     else:
         return dict(content=sel_agregacao(agregacao, ano, atributo)[5].to_json(), 
                     filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-{agregacao}.geojson")
