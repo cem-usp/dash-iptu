@@ -1,0 +1,1 @@
+## CA médio em lotes não condominiais

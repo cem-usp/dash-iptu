@@ -1,0 +1,1 @@
+## Tamanho Médio da Unidade Condominial

@@ -1,0 +1,1 @@
+## Tamanho médio dos Terrenos

@@ -1,0 +1,1 @@
+## TO médio em lotes condominiais

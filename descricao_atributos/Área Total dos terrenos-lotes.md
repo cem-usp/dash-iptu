@@ -1,0 +1,1 @@
+## Área Total dos terrenos-lotes

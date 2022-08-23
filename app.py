@@ -277,7 +277,9 @@ app.layout = dbc.Container(
                         dbc.DropdownMenuItem(".. por Quadras", id='download-button-quadra', n_clicks=0),
                         dbc.DropdownMenuItem(".. por Lotes", id='download-button-lotes', n_clicks=0)
                     ],
-                )]
+                ),
+                html.Br(),
+                dcc.Markdown(id='markdown-descricao-atributo')]
             ),
             dbc.Col(
                 [dcc.Graph(id="graph"),
@@ -297,6 +299,7 @@ app.layout = dbc.Container(
     Output("tab-1", "label"),
     Output("tab-2", "label"),
     Output("tab-3", "label"),
+    Output('markdown-descricao-atributo', 'children'),
     Input("dropdown-input", "value"),
     Input("range-slider", "value"),
     Input("radioitems-input", "value"),
@@ -313,20 +316,26 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
     gdf_agregacao, hover_data, custom_data, min_max, gdf, gdf_diff, min_max_diff, gdf_total = sel_agregacao(agregacao, ano, atributo)
 
     if tab == 'atributo':
-        registros = f"{format(gdf_agregacao['Quantidade de Unidades'].sum(), ',d').replace(',', '.')} registros calculados"
+        # print(gdf_agregacao.iloc[:, -1].sum())
+        registros = f"{gdf_agregacao.iloc[:, -1].sum()} registros calculados"
+        # registros = f"{gdf_agregacao.shape[0]} registros calculados"
         # Escalas de Cores disponíveis em: https://plotly.com/python/builtin-colorscales/
         color_continuous_scale='turbo'
         # color_continuous_midpoint = (min_max[1] - min_max[0])/2
         gdf_map = gdf_agregacao
         range_color=min_max
     else:
-        registros = f"{format(gdf['Quantidade de Unidades'].sum(), ',d').replace(',', '.')} registros calculados"
+        registros = f"{gdf_agregacao.iloc[:, -1].sum()} registros calculados"
         color_continuous_scale='RdYlBu'
         color_continuous_midpoint = 0.0
         # color_continuous_midpoint = (min_max[1] - min_max[0])/2
         gdf_map = gdf_diff
         range_color=min_max_diff
 
+    ## BUG
+    if atributo == 'Quantidade de Unidades':
+        gdf_map = gdf_map.iloc[:, 0:3]
+        
     fig = px.choropleth_mapbox(gdf_map,
                     geojson=gdf_map.geometry,
                     color_continuous_scale=color_continuous_scale,
@@ -354,7 +363,9 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
 
     # print(min_max_diff)
 
-    return fig, loading, registros, tab1, tab2, tab3 
+    r = open(f'descricao_atributos/{atributo}.md', 'r')
+
+    return fig, loading, registros, tab1, tab2, tab3, r.read() 
 
 
 def sel_agregacao(agregacao, ano, atributo, distrito=90):

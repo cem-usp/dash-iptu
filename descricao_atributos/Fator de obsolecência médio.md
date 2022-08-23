@@ -1,0 +1,1 @@
+## Fator de obsolecência médio
