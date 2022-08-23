@@ -210,7 +210,7 @@ navbar = dbc.NavbarSimple(
     children=[
         como_citar,
     ],
-    brand="CEM - Centro de Estudo das Metrópoles - Dash IPTU de São Paulo (1995-2022) - V.0.4.4",
+    brand="CEM - Centro de Estudo das Metrópoles - Dash IPTU de São Paulo (1995-2022) - V.0.4.6",
     brand_href="#",
     color="#003366",
     dark=True
@@ -527,7 +527,7 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
                 'Outros Usos (qt)':'sum'
         }
 
-        print('lotes')
+        # print('lotes')
         
         # Abrindo Arquivo de lotes
         path = f'lotes_agregados_por_ano/{ano[-1]}/SIRGAS_SHP_LOTES_{distrito.ds_codigo.rjust(2, "0")}_{distrito.ds_nome.replace(" ", "_")}_IPTU_{ano[-1]}.gpkg'
