@@ -210,7 +210,7 @@ navbar = dbc.NavbarSimple(
     children=[
         como_citar,
     ],
-    brand="CEM - Centro de Estudo das Metrópoles - Dash IPTU de São Paulo (1995-2022) - V.0.4.6",
+    brand="CEM - Centro de Estudo das Metrópoles - Dash IPTU de São Paulo (1995-2022) - V.0.4.7",
     brand_href="#",
     color="#003366",
     dark=True
