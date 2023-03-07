@@ -16,11 +16,20 @@ Os dados de IPTU estão disponíveis para acesso público pelo portal GeoSampa. 
 
 A premissa é que os dados do IPTU possam ser organizados, visualizados e analisados em 3 dimensões ou perspectivas: A cronológica anual, a dimensão espacial com diversas agregações até a escala do lote, e as dimensões de atributos cadastrais a partir das dimensões espaciais e cronológicas. 
 
-Para a dimensão cronológica existe a possibilidade de filtragem e agrupamento por faixas de anos para análises como variações e dinâmicas temporais. Para as dimensões espaciais é possível filtrar e agrupar por diversos arranjos, sejam eles: políticos administrativos, como distritos e sub-prefeituras, sejam cadastrais, fiscais e legais como setor fiscal, Leis de Zoneamento, macro-áreas, ZEIS, ou mesmo logradouro e ainda agragações com arranjos para finalidades analíticas específicas, como Zona de Origem-destino. 
+Para a dimensão cronológica existe a possibilidade de filtragem e agrupamento por faixas de anos para análises como variações e dinâmicas temporais. Para as dimensões espaciais é possível filtrar e agrupar por diversos arranjos, sejam eles: políticos administrativos, como distritos e sub-prefeituras, sejam cadastrais, fiscais e legais como setor fiscal, Leis de Zoneamento, macro-áreas, ZEIS, ou mesmo logradouro e ainda agragações com arranjos para finalidades analíticas específicas, como Zona de Origem-destino.
 
 Para as dimensões cadastrais, são calculados os índices urbanísticos de Taxa de Ocupação (TO) e Coeficiente de Aproveitamento (CA), assim como os devidos agrupamentos nos campos de categoriais, como uso e tipo de imóvel. 
 
 Os processamentos ficarão à disposição em Notebooks escritos em Python utilizando as bibliotecas: Numpy, Pandas, GeoPandas, Vaex e o DashBoard será gerado utilizando a bilioteca Dash/Plotly
+
+## Procedimento de atualização anual
+
+Anualmente os dados de IPTU são atualizados pela Secretaria da Fazenda e deve-se atualizar os dados desse repositório pelo seguinte procedimento
+
+- Download do IPTU para a pasta apropriada `data\IPTU_{ano}\`
+- Reprocessamento dos dados 
+- Download dos lotes fiscais
+- Agre
 
 ## Docker
 

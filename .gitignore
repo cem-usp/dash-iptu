@@ -6,7 +6,7 @@ data/IPTU-HDF5
 data/*.pkl
 tmp/*
 lotes_agregados_por_ano/atributo_de_data
-data/IPTU-1995-2022-agrupados-por-sq.hdf5
+data/IPTU-1995-*-agrupados-por-sq.hdf5
 data/por_distritos
 lotes_agregados_por_ano/sql_para_sqlc.feather
 venv
