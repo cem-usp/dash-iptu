@@ -27,9 +27,9 @@ Os processamentos ficarão à disposição em Notebooks escritos em Python utili
 Anualmente os dados de IPTU são atualizados pela Secretaria da Fazenda e deve-se atualizar os dados desse repositório pelo seguinte procedimento
 
 - Download do IPTU para a pasta apropriada `data\IPTU_{ano}\`
-- Reprocessamento dos dados 
-- Download dos lotes fiscais
-- Agre
+- Reprocessamento dos dados `14 - Preparando dados do IPTU recorrente.ipynb`
+- Download dos lotes fiscais atualizado
+- Atualizando IPTU `15 - Atualizando IPTU-anualmente.ipynb`, para gerar os arquivos de lotes atualizados
 
 ## Docker
 

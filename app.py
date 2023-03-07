@@ -197,7 +197,7 @@ como_citar = html.Div(
             n_clicks=0,
         ),
         dbc.Toast(
-            "Aqui em breve informações de como citar este trabalho",
+            "GOMES, Fernando; GIANNOTTI, Mariana Abrantes; SALVARANI, Luciana. Painel Cadastral da Cidade de São Paulo, desenvolvido pelo Centro de Estudos da Metrópole (CEM). Disponível em: <https://doi.org/10.55881/cem.db.dash01>.",
             id="positioned-toast",
             header="Como citar o Dash do IPTU",
             is_open=False,
