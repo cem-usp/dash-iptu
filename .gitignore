@@ -2,6 +2,7 @@ data/IPTU_*
 data/SIRGAS_SHP_quadraMDSF.zip
 ssl/*
 data/lotes
+data/lotes/2023
 data/IPTU-HDF5
 data/*.pkl
 tmp/*
