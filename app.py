@@ -18,11 +18,11 @@ import os
 
 EXERCICIO = 2023
 
-df_iptu_distrito = vaex.open('data/IPTU-1995-2022-agrupados-por-distrito.hdf5')
-df_iptu_subprefeitura = vaex.open('data/IPTU-1995-2022-agrupados-por-subprefeitura.hdf5')
-df_iptu_od = vaex.open('data/IPTU-1995-2022-agrupados-por-od.hdf5')
-df_iptu_censo = vaex.open('data/IPTU-1995-2022-agrupados-por-censo.hdf5')
-df_iptu_sq = vaex.open('data/IPTU-1995-2022-agrupados-por-sq.hdf5')
+df_iptu_distrito = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-distrito.hdf5')
+df_iptu_subprefeitura = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-subprefeitura.hdf5')
+df_iptu_od = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-od.hdf5')
+df_iptu_censo = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-censo.hdf5')
+df_iptu_sq = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-sq.hdf5')
 
 gdf_distritos = gpd.read_file('data/SIRGAS_GPKG_distrito.gpkg')
 gdf_distritos['area'] = gdf_distritos.area
@@ -177,11 +177,11 @@ range_slider = html.Div(
         dbc.Label("82.322.059 registros calculados", id="registros-calculados"),
         dcc.RangeSlider(id="range-slider", 
                         min=1995, 
-                        max=2022, 
+                        max=EXERCICIO, 
                         step=1, 
                         updatemode='drag',
-                        # value=[2022,2022],
-                        value=[1995,2022],
+                        # value=[EXERCICIO,EXERCICIO],
+                        value=[1995,EXERCICIO],
                         marks={1995: '1995',2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
                         pushable=True),
     ],
@@ -212,7 +212,7 @@ navbar = dbc.NavbarSimple(
     children=[
         como_citar,
     ],
-    brand="CEM - Centro de Estudo das Metrópoles - Dash IPTU de São Paulo (1995-2022) - V.0.4.7",
+    brand=f"CEM - Centro de Estudo das Metrópoles - Dash IPTU de São Paulo (1995-{EXERCICIO}) - V.0.5.0",
     brand_href="#",
     color="#003366",
     dark=True
@@ -226,8 +226,8 @@ app.layout = dbc.Container(
                 [html.Br(),
                 dcc.Tabs(id='tab', value='atributo', children=[
                     dcc.Tab(label='Sobre o Dash do IPTU', value='sobre', id='tab-0', disabled=False),
-                    dcc.Tab(label='Área Total Construída em 2022', value='atributo', id='tab-1'),
-                    dcc.Tab(label='Diferença de 1995 à 2022', value='diferenca', id='tab-2'),
+                    dcc.Tab(label=f'Área Total Construída em {EXERCICIO}', value='atributo', id='tab-1'),
+                    dcc.Tab(label=f'Diferença de 1995 à {EXERCICIO}', value='diferenca', id='tab-2'),
                     dcc.Tab(label='Descrição do cálculo/processamento para Área Total Construída', value='descricao', id='tab-3', disabled=True),
                 ]),
                 dbc.Offcanvas(
@@ -549,11 +549,11 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
         gdf_lote = gdf_lote[gdf_lote.is_valid]
 
         # Abrindo arquivo com os dados agregados de IPTU por lote (SQLC)
-        df_iptu = vaex.open(f'data/por_distritos/IPTU-1995-2022-agrupados-por-sqlc-{distrito.ds_codigo}-{distrito.ds_nome.replace(" ", "-").lower()}.hdf5').to_pandas_df().set_index('sqlc')
+        df_iptu = vaex.open(f'data/por_distritos/IPTU-1995-{EXERCICIO}-agrupados-por-sqlc-{distrito.ds_codigo}-{distrito.ds_nome.replace(" ", "-").lower()}.hdf5').to_pandas_df().set_index('sqlc')
 
         if tab != "diferenca":
             df_iptu = df_iptu[df_iptu.ano == ano[-1]]#[[atributo]]
-            lotes_existentes = gdf_lote.join(df_iptu, how='inner')
+            lotes_existentes = gdf_lote.join(df_iptu, how='right')
             lotes_sg = df_iptu.join(gdf_lote, how='left').sq.isna()
             df_lotes_sg = df_iptu[lotes_sg].reset_index()
             df_lotes_sg.sqlc = df_lotes_sg.sqlc.str[:6] + '000000'
@@ -565,13 +565,13 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
                     filename=f"IPTU-SP-todos-atributos-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
         else:
             df_iptu = df_iptu[(df_iptu.ano >= ano[0]) & (df_iptu.ano <= ano[-1])][['ano', atributo]].reset_index().pivot(index='sqlc', columns='ano', values=atributo)
-            lotes_existentes = gdf_lote.join(df_iptu, how='inner')
+            lotes_existentes = gdf_lote.join(df_iptu, how='right')
             lotes_sg = df_iptu.join(gdf_lote, how='left').sq.isna()
             df_lotes_sg = df_iptu[lotes_sg].reset_index()
             df_lotes_sg.sqlc = df_lotes_sg.sqlc.str[:6] + '000000'
             df_lotes_sg_group = df_lotes_sg.groupby('sqlc').agg(agg_atributos[atributo])
             # Agora com as geometrias
-            lotes_agregados = gdf_lote.join(df_lotes_sg_group, how='inner')
+            lotes_agregados = gdf_lote.join(df_lotes_sg_group, how='right')
             lotes = pd.concat([lotes_existentes, lotes_agregados])
 
             return dict(content=lotes.to_json(), 
