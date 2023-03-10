@@ -26,6 +26,7 @@ df_iptu_sq = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-sq.hdf5')
 
 gdf_distritos = gpd.read_file('data/SIRGAS_GPKG_distrito.gpkg')
 gdf_distritos['area'] = gdf_distritos.area
+gdf_distritos_download = gdf_distritos
 gdf_distritos.geometry = gdf_distritos.simplify(tolerance=100)
 gdf_distritos.to_crs(epsg=4674, inplace=True)
 
