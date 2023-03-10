@@ -335,8 +335,8 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
         range_color=min_max_diff
 
     ## BUG
-    if atributo == 'Quantidade de Unidades':
-        gdf_map = gdf_map.iloc[:, 0:3]
+    # if atributo == 'Quantidade de Unidades':
+    #     gdf_map = gdf_map.iloc[:, 0:3]
         
     fig = px.choropleth_mapbox(gdf_map,
                     geojson=gdf_map.geometry,
@@ -553,7 +553,7 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
 
         if tab != "diferenca":
             df_iptu = df_iptu[df_iptu.ano == ano[-1]]#[[atributo]]
-            lotes_existentes = gdf_lote.join(df_iptu, how='right')
+            lotes_existentes = gdf_lote.join(df_iptu, how='inner')
             lotes_sg = df_iptu.join(gdf_lote, how='left').sq.isna()
             df_lotes_sg = df_iptu[lotes_sg].reset_index()
             df_lotes_sg.sqlc = df_lotes_sg.sqlc.str[:6] + '000000'
@@ -565,13 +565,13 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
                     filename=f"IPTU-SP-todos-atributos-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
         else:
             df_iptu = df_iptu[(df_iptu.ano >= ano[0]) & (df_iptu.ano <= ano[-1])][['ano', atributo]].reset_index().pivot(index='sqlc', columns='ano', values=atributo)
-            lotes_existentes = gdf_lote.join(df_iptu, how='right')
+            lotes_existentes = gdf_lote.join(df_iptu, how='inner')
             lotes_sg = df_iptu.join(gdf_lote, how='left').sq.isna()
             df_lotes_sg = df_iptu[lotes_sg].reset_index()
             df_lotes_sg.sqlc = df_lotes_sg.sqlc.str[:6] + '000000'
             df_lotes_sg_group = df_lotes_sg.groupby('sqlc').agg(agg_atributos[atributo])
             # Agora com as geometrias
-            lotes_agregados = gdf_lote.join(df_lotes_sg_group, how='right')
+            lotes_agregados = gdf_lote.join(df_lotes_sg_group, how='inner')
             lotes = pd.concat([lotes_existentes, lotes_agregados])
 
             return dict(content=lotes.to_json(), 
