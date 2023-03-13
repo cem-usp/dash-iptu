@@ -251,7 +251,7 @@ como_citar = html.Div(
 
 navbar = dbc.NavbarSimple(
     children=[
-        html.Img(src=app.get_asset_url('cem-geoinfo.png'), height="50px"),
+        html.Img(src=app.get_asset_url('cem-geoinfo-tudo-branco.png'), height="50px"),
         como_citar,
     ],
     brand=f"Painel Cadastral da Cidade de São Paulo (1995-{EXERCICIO}) - V.0.5.0",
@@ -422,7 +422,7 @@ app.layout = dbc.Container(
             dbc.Row([
                 dcc.Markdown('Realização:'),
                 dbc.Col(html.Img(src=app.get_asset_url('cem-alta.jpg'), height="100px"), width=4),
-                dbc.Col(html.Img(src=app.get_asset_url('URBANISMO_E_LICENCIAMENTO_HORIZONTAL_FUNDO_CLARO.png'), height="100px"), width=4),
+                dbc.Col(html.Img(src=app.get_asset_url('URBANISMO_E_LICENCIAMENTO_HORIZONTAL_FUNDO_CLARO.png'), height="85px"), width=4),
                 dbc.Col(html.Div("Parceria firmada pelo acordo de cooperação técnica entre o Centro de Estudo da Matrópole (CEM) e a Secretaria Municipal de Urbanismo e Licensiamento (SMUL nº001/2022/SMUL)"))
             ]),
         ]),
@@ -434,7 +434,7 @@ app.layout = dbc.Container(
             dbc.Col(html.Img(src=app.get_asset_url('logo-fapesp-2.png'), height="75px"), width=2),
             dbc.Col(html.Img(src=app.get_asset_url('cepid.jpg'), height="75px"), width=2),
             dbc.Col(html.Img(src=app.get_asset_url('usp.jpg'), height="75px"), width=2),
-            dbc.Col(html.Img(src=app.get_asset_url('fflch.jpg'), height="75px"), width=2),],
+            dbc.Col(html.Img(src=app.get_asset_url('fflch.jpg'), height="50px"), width=2),],
             style={'padding-top': '30px'}
         )
     ])
