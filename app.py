@@ -25,7 +25,7 @@ df_iptu_censo = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-censo.hdf5'
 df_iptu_sq = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-sq.hdf5')
 
 gdf_distritos = gpd.read_file('data/SIRGAS_GPKG_distrito.gpkg')
-gdf_distritos['area'] = gdf_distritos.area
+# gdf_distritos['area'] = gdf_distritos.area
 gdf_distritos_download = gdf_distritos.copy(deep=True)
 gdf_distritos.geometry = gdf_distritos.simplify(tolerance=100)
 gdf_distritos.to_crs(epsg=4674, inplace=True)
@@ -33,19 +33,19 @@ gdf_distritos.to_crs(epsg=4674, inplace=True)
 gdf_od = gpd.read_file('zip://data/SIRGAS_SHP_origemdestino_2017.zip!SIRGAS_SHP_origemdestino_2017', crs='EPSG:31983')
 gdf_od = gdf_od[gdf_od.od_municip == '36']
 gdf_od.set_crs(epsg=31983, inplace=True)
-gdf_od['area'] = gdf_od.area
+# gdf_od['area'] = gdf_od.area
 gdf_od_download = gdf_od.copy(deep=True)
 gdf_od.geometry = gdf_od.simplify(tolerance=10)
 gdf_od.to_crs(epsg=4674, inplace=True)
 
 gdf_subprefeitura = gpd.read_file('zip://data/SIRGAS_GPKG_subprefeitura.zip!SIRGAS_GPKG_subprefeitura.gpkg')
-gdf_subprefeitura['area'] = gdf_subprefeitura.area
+# gdf_subprefeitura['area'] = gdf_subprefeitura.area
 gdf_subprefeitura_download = gdf_subprefeitura.copy(deep=True)
 gdf_subprefeitura.geometry = gdf_subprefeitura.simplify(tolerance=100)
 gdf_subprefeitura.to_crs(epsg=4674, inplace=True)
 
 gdf_censo = gpd.read_file('data/areas-ponderacao-censo.gpkg', layer='areas-ponderacao-censo-2010')
-gdf_censo['area'] = gdf_censo.area
+# gdf_censo['area'] = gdf_censo.area
 gdf_censo_download = gdf_censo.copy(deep=True)
 gdf_censo.geometry = gdf_censo.simplify(tolerance=100)
 gdf_censo.to_crs(epsg=4674, inplace=True)
