@@ -2,4 +2,5 @@ data/IPTU_*
 data/SIRGAS_SHP_quadraMDSF.zip
 data/*
 lotes_agregados_por_ano/*
+iptu_por_pontos/*
 .git/

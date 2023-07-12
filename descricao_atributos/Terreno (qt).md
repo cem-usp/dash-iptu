@@ -1,6 +1,6 @@
 ## Terreno (qt)
 
-Filtra apenas os registros de Lançamentos de Terrenos, retornando a soma da quantidade de registros.
+Filtra apenas os registros de Lançamentos de Terrenos, retornando a soma da quantidade de registros. Portanto, são lotes sem uma edificação cadastrada.
 
 Este atributo está presente no cadastro do IPTU para cada lançamento no campo originalmente chamado de `TIPO DE PADRAO DA CONSTRUCAO`, que para o exercício de 2022, apresentava 29 variações com descrições unicas. Tais descrições pode ser agrupadas conforme o uso em: _Comercial_, _Residencial_, _Terreno_ e _Outros Usos_.
 

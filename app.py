@@ -124,7 +124,7 @@ atributos = [
     'Quantidade de Unidades Condominiais',
     'Tamanho Médio da Unidade Condominial',
     'Tamanho médio dos Terrenos',
-    'Área Total dos terrenos-lotes',
+    'Área Total dos lotes',
     'Área Total Ocupada',
     'Área Total Construída',
     'Valor Total dos Terrenos',
@@ -171,7 +171,7 @@ atributos = [
 checklist = html.Div(
     [
         html.Hr(),
-        dbc.Label("Selecione as totalizações, índices ou Quantitativos"),
+        dbc.Label("Selecione as totalizações, índices ou quantitativos"),
         dcc.Dropdown(atributos, 'Área Total Construída', id='dropdown-input', clearable=False),
     ]
 )
@@ -349,7 +349,7 @@ app.layout = dbc.Container(
                 ]),
                 dbc.Offcanvas(
                     dcc.Markdown('''
-                        O Painel Cadastral da Cidade de São Paulo é uma ferramenta que permite acesso rápido às informações cadastrais dos imóveis da cidade, onde há incidência de IPTU. É um avanço para a democraticação e disseminação de acesso a tais dados, uma vez que as fontes originais disponíveis para download no site do GeoSampa possuem mais de 86 milhões de registros com dezenas de atributos e sem espacialização.
+                        O Painel Cadastral da Cidade de São Paulo é uma ferramenta que permite acesso rápido às informações cadastrais dos imóveis da cidade, onde há incidência de Imposto Predial e Territorial Urbano – Emissão Geral (IPTU-EG). É um avanço para a democraticação e disseminação de acesso a tais dados, uma vez que as fontes originais disponíveis para download no site do GeoSampa possuem mais de 86 milhões de registros com dezenas de atributos e sem espacialização.
 
                         Portanto, essa ferramenta surge a partir do acordo de cooperação técnica entre o Centro de Estudos da Metrópole (CEM) e a Secretaria Municipal de Urbanismo e Licensiamento (SMUL), com a intenção de disseminar e facilitar o acesso a esse conjunto de dados muito importante para entender as dinâmicas de uso e ocupação na cidade de São Paulo.
 
@@ -485,8 +485,8 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
     # gdf_map.to_crs(epsg=4674, inplace=True)
 
     ## BUG
-    # if atributo == 'Quantidade de Unidades':
-    #     gdf_map = gdf_map.iloc[:, 0:3]
+    if atributo == 'Quantidade de Unidades' and tab == 'atributo':
+        gdf_map = gdf_map.iloc[:, 0:3]
         
     fig = px.choropleth_mapbox(gdf_map,
                     geojson=gdf_map.geometry,
@@ -703,7 +703,7 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
                 'Quantidade de Unidades Condominiais':'sum',
                 'Tamanho Médio da Unidade Condominial':'mean',
                 'Tamanho médio dos Terrenos':'mean',
-                'Área Total dos terrenos-lotes':'sum',
+                'Área Total dos lotes':'sum',
                 'Área Total Ocupada':'sum',
                 'Área Total Construída':'sum',
                 'Valor Total dos Terrenos':'sum',
