@@ -23,6 +23,7 @@ df_iptu_subprefeitura = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-sub
 df_iptu_od = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-od.hdf5')
 df_iptu_censo = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-censo.hdf5')
 df_iptu_sq = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-sq.hdf5')
+df_iptu_macroareas = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-macro_area.hdf5')
 
 gdf_distritos = gpd.read_file('data/SIRGAS_GPKG_distrito.gpkg')
 # gdf_distritos['area'] = gdf_distritos.area
@@ -49,6 +50,12 @@ gdf_censo = gpd.read_file('data/areas-ponderacao-censo.gpkg', layer='areas-ponde
 gdf_censo_download = gdf_censo.copy(deep=True)
 gdf_censo.geometry = gdf_censo.simplify(tolerance=100)
 gdf_censo.to_crs(epsg=4674, inplace=True)
+
+gdf_macroareas = gpd.read_file('data/macroareas.gpkg')
+gdf_macroareas_download = gdf_macroareas.copy(deep=True)
+gdf_macroareas.geometry = gdf_macroareas.simplify(tolerance=100)
+gdf_macroareas.to_crs(epsg=4674, inplace=True)
+
 
 gdf_quadras = gpd.read_file('data/quadras.gpkg')
 gdf_quadras.to_crs(epsg=4674, inplace=True)
@@ -85,7 +92,7 @@ radioitems = html.Div(
                 {"label": "Subprefeituras", "value": 'subprefeituras', "disabled": False},
                 {"label": "Distritos", "value": 'distritos'},
                 {"label": "Zonas OD (2017)", "value": 'zonas-od', "disabled": False},
-                {"label": "Macroáreas PDE(2014)", "value": 'macro-areas', "disabled": True},
+                {"label": "Macroáreas PDE(2014)", "value": 'macroareas', "disabled": False},
                 {"label": "Áreas de Ponderação do CENSO(2010)", "value": 'censo', "disabled": False},
             ],
             value='distritos',
@@ -626,6 +633,30 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
         hover_data = ["COD_AED"]
         custom_data=["COD_AED_S"]
         min_max = [df_iptu_censo[atributo].min().item(), df_iptu_censo[atributo].max().item()]
+
+    if agregacao == 'macroareas':
+        gdf = gdf_macroareas.astype({'ma': 'int'})\
+            .merge(df_iptu_macroareas[(df_iptu_macroareas.ano >= ano[0]) & (df_iptu_macroareas.ano <= ano[-1])].to_pandas_df(), \
+                left_on='ma', right_on='macro_area')#\
+                    # [["ma", "COD_AED", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
+        gdf_download = gdf_macroareas_download.astype({'ma': 'int'})\
+            .merge(df_iptu_macroareas[(df_iptu_macroareas.ano >= ano[0]) & (df_iptu_macroareas.ano <= ano[-1])].to_pandas_df(), \
+                left_on='ma', right_on='macro_area')
+
+        gdf_agregacao = gdf.loc[gdf.ano == ano[-1], ["ma", "mc_nome_2", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
+
+        diff = gdf.pivot(index='ma', columns='ano', values=atributo)
+        gdf_diff = gdf_macroareas.astype({'ma': 'int'}).set_index('ma').merge(diff, left_index=True, right_index=True, how='left')
+        gdf_diff.loc[:, atributo] = (gdf_diff[ano[-1]] - gdf_diff[ano[0]])
+
+        diff_download = gdf_download.pivot(index='ma', columns='ano', values=atributo)
+        gdf_diff_download = gdf_macroareas_download.astype({'ma': 'int'}).set_index('ma').merge(diff_download, left_index=True, right_index=True, how='left')
+        gdf_diff_download.loc[:, atributo] = (gdf_diff_download[ano[-1]] - gdf_diff_download[ano[0]])
+
+        gdf_agregacao.set_index('ma', inplace=True)
+        hover_data = ["mc_nome_2"]
+        custom_data=["ma"]
+        min_max = [df_iptu_macroareas[atributo].min().item(), df_iptu_macroareas[atributo].max().item()]
 
     max_value = abs(max([gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()], key=abs))
     min_max_diff = [-1 * max_value, max_value]
