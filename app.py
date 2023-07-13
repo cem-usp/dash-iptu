@@ -68,8 +68,14 @@ distritos_items = [{"label": d.ds_nome, "value": d.ds_codigo} for i, d in gdf_di
 #     if os.environ['DASH_ENV'] == 'production':
 #         routes_pathname_prefix='/'
 
+google_analytics_script = [
+    {'src':"https://www.googletagmanager.com/gtag/js?id=G-J5H5G17D41"},
+    "window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-J5H5G17D41');"
+]
+
 app = dash.Dash(__name__,
     external_stylesheets=[dbc.themes.BOOTSTRAP],
+    external_scripts=google_analytics_script
     # as the proxy server will remove the prefix
     ## TODO IF PRODUCTION
     # routes_pathname_prefix='/',
