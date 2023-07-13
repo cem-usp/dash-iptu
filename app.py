@@ -261,7 +261,7 @@ navbar = dbc.NavbarSimple(
         html.Img(src=app.get_asset_url('cem-geoinfo-tudo-branco.png'), height="50px"),
         como_citar,
     ],
-    brand=f"Painel Cadastral da Cidade de São Paulo (1995-{EXERCICIO}) - V.0.5.0",
+    brand=f"Painel Cadastral da Cidade de São Paulo (1995-{EXERCICIO}) - V.0.5.1",
     brand_href="#",
     color="#003366",
     dark=True
@@ -494,7 +494,8 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
     ## BUG
     if atributo == 'Quantidade de Unidades' and tab == 'atributo':
         gdf_map = gdf_map.iloc[:, 0:3]
-        
+
+
     fig = px.choropleth_mapbox(gdf_map,
                     geojson=gdf_map.geometry,
                     color_continuous_scale=color_continuous_scale,
@@ -507,7 +508,9 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
                     range_color=range_color,
                     locations=gdf_map.index.to_list(),
                     mapbox_style="white-bg",
+                    # https://plotly.com/python/reference/choroplethmapbox/
                     hover_data=hover_data,
+                    # hovertemplate='seila',
                     # custom_data=custom_data,
                     height=600,
                     width=800)
@@ -553,7 +556,7 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
         gdf_diff_download.loc[:, atributo] = (gdf_diff_download[ano[-1]] - gdf_diff_download[ano[0]])
 
         gdf_agregacao.set_index('ds_codigo', inplace=True)
-        hover_data = ["ds_nome"]
+        hover_data = {"ds_nome":True, atributo:':,.2f'}
         custom_data=["ds_codigo"]
         min_max = [df_iptu_distrito[atributo].min().item(), df_iptu_distrito[atributo].max().item()]
         # min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
@@ -579,7 +582,7 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
         gdf_diff_download.loc[:, atributo] = (gdf_diff_download[ano[-1]] - gdf_diff_download[ano[0]])
         
         gdf_agregacao.set_index('sp_codigo', inplace=True)
-        hover_data = ["sp_nome"]
+        hover_data = {"sp_nome":True, atributo:':,.2f'}
         custom_data=["sp_codigo"]
         min_max = [df_iptu_subprefeitura[atributo].min().item(), df_iptu_subprefeitura[atributo].max().item()]
         # min_max_diff = [gdf_diff[atributo].min().item(), gdf_diff[atributo].max().item()]
@@ -606,7 +609,7 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
         gdf_diff_download.loc[:, atributo] = (gdf_diff_download[ano[-1]] - gdf_diff_download[ano[0]])
 
         gdf_agregacao.set_index('od_id', inplace=True)
-        hover_data = ["od_nome"]
+        hover_data = {"od_nome":True, atributo:':,.2f'}
         custom_data=["od_id"]
         min_max = [df_iptu_od[atributo].min().item(), df_iptu_od[atributo].max().item()]
     
@@ -630,7 +633,7 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
         gdf_diff_download.loc[:, atributo] = (gdf_diff_download[ano[-1]] - gdf_diff_download[ano[0]])
 
         gdf_agregacao.set_index('COD_AED_S', inplace=True)
-        hover_data = ["COD_AED"]
+        hover_data = {"COD_AED":True, atributo:':,.2f'}
         custom_data=["COD_AED_S"]
         min_max = [df_iptu_censo[atributo].min().item(), df_iptu_censo[atributo].max().item()]
 
@@ -654,7 +657,7 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
         gdf_diff_download.loc[:, atributo] = (gdf_diff_download[ano[-1]] - gdf_diff_download[ano[0]])
 
         gdf_agregacao.set_index('ma', inplace=True)
-        hover_data = ["mc_nome_2"]
+        hover_data = {"mc_nome_2":True, atributo:':,.2f'}
         custom_data=["ma"]
         min_max = [df_iptu_macroareas[atributo].min().item(), df_iptu_macroareas[atributo].max().item()]
 
