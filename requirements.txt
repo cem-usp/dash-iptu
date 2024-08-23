@@ -16,3 +16,4 @@ vaex-ml==0.17.0
 vaex-server==0.8.1
 vaex-viz==0.5.2
 flask==2.1.1
+pydantic==1.10.11
