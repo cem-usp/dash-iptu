@@ -16,7 +16,7 @@ import plotly.express as px
 import vaex
 import os
 
-EXERCICIO = 2023
+EXERCICIO = 2024
 
 df_iptu_distrito = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-distrito.hdf5')
 df_iptu_subprefeitura = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-subprefeitura.hdf5')
