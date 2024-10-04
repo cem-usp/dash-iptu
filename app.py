@@ -267,7 +267,7 @@ navbar = dbc.NavbarSimple(
         html.Img(src=app.get_asset_url('cem-geoinfo-tudo-branco.png'), height="50px"),
         como_citar,
     ],
-    brand=f"Painel Cadastral da Cidade de São Paulo (1995-{EXERCICIO}) - V.0.5.1",
+    brand=f"Painel Cadastral da Cidade de São Paulo (1995-{EXERCICIO}) - V.0.5.2",
     brand_href="#",
     color="#003366",
     dark=True
