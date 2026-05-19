@@ -1,29 +1,43 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
-# from cgitb import enable
-# from faulthandler import disable
-from cgitb import enable
-from email import header
-from faulthandler import disable
-from certifi import contents
 import geopandas as gpd
 import pandas as pd
 from dash import Dash, html, dcc, Input, Output, State, dash_table, callback_context
 import dash
 import dash_bootstrap_components as dbc
 import plotly.express as px
-import vaex
 import os
+import h5py
+
+def read_vaex_hdf5(filepath):
+    """Read HDF5 files created by Vaex into a pandas DataFrame"""
+    with h5py.File(filepath, 'r') as f:
+        table = f['table']
+        columns_group = table['columns']
+        column_order_attr = columns_group.attrs['column_order']
+        # Handle both bytes and string
+        if isinstance(column_order_attr, bytes):
+            column_order = column_order_attr.decode().split(',')
+        else:
+            column_order = column_order_attr.split(',')
+        
+        data = {}
+        for col in column_order:
+            col_group = columns_group[col]
+            data[col] = col_group['data'][:]
+        
+        return pd.DataFrame(data)
 
 EXERCICIO = 2024
 
-df_iptu_distrito = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-distrito.hdf5')
-df_iptu_subprefeitura = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-subprefeitura.hdf5')
-df_iptu_od = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-od.hdf5')
-df_iptu_censo = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-censo.hdf5')
-df_iptu_sq = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-sq.hdf5')
-df_iptu_macroareas = vaex.open(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-macro_area.hdf5')
+df_iptu_distrito = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-distrito.hdf5')
+df_iptu_subprefeitura = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-subprefeitura.hdf5')
+df_iptu_od = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-od.hdf5')
+df_iptu_censo = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-censo.hdf5')
+# df_iptu_sq is not available - file doesn't exist
+# df_iptu_sq = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-sq.hdf5')
+df_iptu_macroareas = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-macro_area.hdf5')
 
 gdf_distritos = gpd.read_file('data/SIRGAS_GPKG_distrito.gpkg')
 # gdf_distritos['area'] = gdf_distritos.area
@@ -366,7 +380,7 @@ app.layout = dbc.Container(
 
                         Portanto, essa ferramenta surge a partir do acordo de cooperação técnica entre o Centro de Estudos da Metrópole (CEM) e a Secretaria Municipal de Urbanismo e Licensiamento (SMUL), com a intenção de disseminar e facilitar o acesso a esse conjunto de dados muito importante para entender as dinâmicas de uso e ocupação na cidade de São Paulo.
 
-                        Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu]). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no (GitHub do Painel de Dados da Cidade)[https://github.com/cem-usp/dash-iptu]
+                        Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu](https://github.com/cem-usp/dash-iptu)). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no [GitHub do Painel de Dados da Cidade](https://github.com/cem-usp/dash-iptu)
 
 
                         '''),
@@ -384,7 +398,7 @@ app.layout = dbc.Container(
 
                 #         Portanto, essa ferramenta surge a partir do acordo de cooperação técnica entre o Centro de Estudos da Metrópole (CEM) e a Secretaria Municipal de Urbanismo e Licensiamento (SMUL), com a intenção de disseminar e facilitar o acesso a esse conjunto de dados muito importante para entender as dinâmicas de uso e ocupação na cidade de São Paulo.
 
-                #         Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu]). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no (GitHub do Painel de Dados da Cidade)[https://github.com/cem-usp/dash-iptu]
+                #         Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu](https://github.com/cem-usp/dash-iptu)). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no [GitHub do Painel de Dados da Cidade](https://github.com/cem-usp/dash-iptu)
 
 
                 #         '''),
@@ -531,7 +545,7 @@ def update_map(atributo, ano, agregacao, tab, mapa_atual):
 
     # print(min_max_diff)
 
-    r = open(f'descricao_atributos/{atributo}.md', 'r')
+    r = open(f'descricao_atributos/{atributo}.md', 'r', encoding='utf-8')
 
     return fig, loading, registros, tab1, tab2, r.read() 
 
@@ -543,13 +557,13 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
     
     if agregacao == 'distritos':
         gdf = gdf_distritos.astype({'ds_codigo': 'int'})\
-            .merge(df_iptu_distrito[(df_iptu_distrito.ano >= ano[0]) & (df_iptu_distrito.ano <= ano[-1])].to_pandas_df(), \
+            .merge(df_iptu_distrito[(df_iptu_distrito.ano >= ano[0]) & (df_iptu_distrito.ano <= ano[-1])], \
                 left_on='ds_codigo', right_on='distrito')#\
                     # [["ds_codigo", "ds_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         gdf_agregacao = gdf.loc[gdf.ano == ano[-1], ["ds_codigo", "ds_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
 
         gdf_download = gdf_distritos_download.astype({'ds_codigo': 'int'})\
-            .merge(df_iptu_distrito[(df_iptu_distrito.ano >= ano[0]) & (df_iptu_distrito.ano <= ano[-1])].to_pandas_df(), \
+            .merge(df_iptu_distrito[(df_iptu_distrito.ano >= ano[0]) & (df_iptu_distrito.ano <= ano[-1])], \
                 left_on='ds_codigo', right_on='distrito')#\
                     # [["ds_codigo", "ds_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
 
@@ -569,11 +583,11 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
 
     if agregacao == 'subprefeituras':
         gdf = gdf_subprefeitura.astype({'sp_codigo': 'int'})\
-            .merge(df_iptu_subprefeitura[(df_iptu_subprefeitura.ano >= ano[0]) & (df_iptu_subprefeitura.ano <= ano[-1])].to_pandas_df(), \
+            .merge(df_iptu_subprefeitura[(df_iptu_subprefeitura.ano >= ano[0]) & (df_iptu_subprefeitura.ano <= ano[-1])], \
                 left_on='sp_codigo', right_on='subprefeitura')#\
                     # [["sp_codigo", "sp_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         gdf_download = gdf_subprefeitura_download.astype({'sp_codigo': 'int'})\
-            .merge(df_iptu_subprefeitura[(df_iptu_subprefeitura.ano >= ano[0]) & (df_iptu_subprefeitura.ano <= ano[-1])].to_pandas_df(), \
+            .merge(df_iptu_subprefeitura[(df_iptu_subprefeitura.ano >= ano[0]) & (df_iptu_subprefeitura.ano <= ano[-1])], \
                 left_on='sp_codigo', right_on='subprefeitura')#\
                     # [["sp_codigo", "sp_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
 
@@ -595,11 +609,11 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
 
     if agregacao == 'zonas-od':
         gdf = gdf_od.astype({'od_id': 'int'})\
-            .merge(df_iptu_od[(df_iptu_od.ano >= ano[0]) & (df_iptu_od.ano <= ano[-1])].to_pandas_df(), \
+            .merge(df_iptu_od[(df_iptu_od.ano >= ano[0]) & (df_iptu_od.ano <= ano[-1])], \
                 left_on='od_id', right_on='od')#\
                     # [["od_id", "od_nome", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         gdf_download = gdf_od_download.astype({'od_id': 'int'})\
-            .merge(df_iptu_od[(df_iptu_od.ano >= ano[0]) & (df_iptu_od.ano <= ano[-1])].to_pandas_df(), \
+            .merge(df_iptu_od[(df_iptu_od.ano >= ano[0]) & (df_iptu_od.ano <= ano[-1])], \
                 left_on='od_id', right_on='od')
 
 
@@ -621,11 +635,11 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
     
     if agregacao == 'censo':
         gdf = gdf_censo.astype({'COD_AED_S': 'int'})\
-            .merge(df_iptu_censo[(df_iptu_censo.ano >= ano[0]) & (df_iptu_censo.ano <= ano[-1])].to_pandas_df(), \
+            .merge(df_iptu_censo[(df_iptu_censo.ano >= ano[0]) & (df_iptu_censo.ano <= ano[-1])], \
                 left_on='COD_AED_S', right_on='censo')#\
                     # [["COD_AED_S", "COD_AED", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         gdf_download = gdf_censo_download.astype({'COD_AED_S': 'int'})\
-            .merge(df_iptu_censo[(df_iptu_censo.ano >= ano[0]) & (df_iptu_censo.ano <= ano[-1])].to_pandas_df(), \
+            .merge(df_iptu_censo[(df_iptu_censo.ano >= ano[0]) & (df_iptu_censo.ano <= ano[-1])], \
                 left_on='COD_AED_S', right_on='censo')
 
         gdf_agregacao = gdf.loc[gdf.ano == ano[-1], ["COD_AED_S", "COD_AED", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
@@ -645,11 +659,11 @@ def sel_agregacao(agregacao, ano, atributo, distrito=90):
 
     if agregacao == 'macroareas':
         gdf = gdf_macroareas.astype({'ma': 'int'})\
-            .merge(df_iptu_macroareas[(df_iptu_macroareas.ano >= ano[0]) & (df_iptu_macroareas.ano <= ano[-1])].to_pandas_df(), \
+            .merge(df_iptu_macroareas[(df_iptu_macroareas.ano >= ano[0]) & (df_iptu_macroareas.ano <= ano[-1])], \
                 left_on='ma', right_on='macro_area')#\
                     # [["ma", "COD_AED", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
         gdf_download = gdf_macroareas_download.astype({'ma': 'int'})\
-            .merge(df_iptu_macroareas[(df_iptu_macroareas.ano >= ano[0]) & (df_iptu_macroareas.ano <= ano[-1])].to_pandas_df(), \
+            .merge(df_iptu_macroareas[(df_iptu_macroareas.ano >= ano[0]) & (df_iptu_macroareas.ano <= ano[-1])], \
                 left_on='ma', right_on='macro_area')
 
         gdf_agregacao = gdf.loc[gdf.ano == ano[-1], ["ma", "mc_nome_2", atributo, 'geometry', 'ano', 'Quantidade de Unidades']]
@@ -721,110 +735,108 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
 
     if 'download-button-quadra' in changed_id:    
-        if tab != "diferenca":
-            quadras = quadras.set_index('sq').join(df_iptu_sq[df_iptu_sq.ano == int(ano[-1])].to_pandas_df().set_index('sq'))
-            # quadras.set_crs(epsg=31983, inplace=True)
-
-            # return dict(content=quadras.to_json(), 
-            #         filename=f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
-            return dcc.send_bytes(quadras.to_file, f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
-        else:
-            quadras = quadras.set_index('sq').join(df_iptu_sq[(df_iptu_sq.ano >= ano[0]) & (df_iptu_sq.ano <= ano[-1])][['sq', 'ano', atributo]].to_pandas_df().pivot(index='sq', columns='ano', values=atributo))
-            # quadras.set_crs(epsg=31983, inplace=True)
-
-            # return dict(content=quadras.to_json(), 
-            #             filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
-            return dcc.send_bytes(quadras.to_file, f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
+        # Quadra download functionality disabled - df_iptu_sq file not available
+        # if tab != "diferenca":
+        #     quadras = quadras.set_index('sq').join(df_iptu_sq[df_iptu_sq.ano == int(ano[-1])].to_pandas_df().set_index('sq'))
+        #     return dcc.send_bytes(quadras.to_file, f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
+        # else:
+        #     quadras = quadras.set_index('sq').join(df_iptu_sq[(df_iptu_sq.ano >= ano[0]) & (df_iptu_sq.ano <= ano[-1])][['sq', 'ano', atributo]].to_pandas_df().pivot(index='sq', columns='ano', values=atributo))
+        #     return dcc.send_bytes(quadras.to_file, f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
+        return None, None
         
     if 'download-button-lotes' in changed_id:
 
-        agg_atributos = {
-                'Quantidade de Unidades':'sum',
-                'Quantidade de Unidades Condominiais':'sum',
-                'Tamanho Médio da Unidade Condominial':'mean',
-                'Tamanho médio dos Terrenos':'mean',
-                'Área Total dos lotes':'sum',
-                'Área Total Ocupada':'sum',
-                'Área Total Construída':'sum',
-                'Valor Total dos Terrenos':'sum',
-                'Valor Total das Construções':'sum',
-                'CA médio':'mean',
-                'TO médio':'mean',
-                'CA médio em lotes condominiais':'mean',
-                'TO médio em lotes condominiais':'mean',
-                'CA médio em lotes não condominiais':'mean',
-                'TO médio em lotes não condominiais':'mean',
-                'Comprimento Médio da Testada':'mean',
-                'Número médio de Pavimentos':'mean',
-                'Fator de obsolecência médio':'mean',
-                'Residencial vertical Baixo (m2)':'sum',
-                'Residencial vertical Médio (m2)':'sum',
-                'Residencial vertical Alto (m2)':'sum',
-                'Residencial horizontal Baixo (m2)':'sum',
-                'Residencial horizontal Médio (m2)':'sum',
-                'Residencial horizontal Alto (m2)':'sum',
-                'Comercial vertical Baixo (m2)':'sum',
-                'Comercial vertical Médio (m2)':'sum',
-                'Comercial vertical Alto (m2)':'sum',
-                'Comercial horizontal Baixo (m2)':'sum',
-                'Comercial horizontal Alto (m2)':'sum',
-                'Comercial horizontal Médio (m2)':'sum',
-                'Terreno (m2)':'sum',
-                'Outros Usos (m2)':'sum',
-                'Residencial vertical Baixo (qt)':'sum',
-                'Residencial vertical Médio (qt)':'sum',
-                'Residencial vertical Alto (qt)':'sum',
-                'Residencial horizontal Baixo (qt)':'sum',
-                'Residencial horizontal Médio (qt)':'sum',
-                'Residencial horizontal Alto (qt)':'sum',
-                'Comercial vertical Baixo (qt)':'sum',
-                'Comercial vertical Médio (qt)':'sum',
-                'Comercial vertical Alto (qt)':'sum',
-                'Comercial horizontal Baixo (qt)':'sum',
-                'Comercial horizontal Alto (qt)':'sum',
-                'Comercial horizontal Médio (qt)':'sum',
-                'Terreno (qt)':'sum',
-                'Outros Usos (qt)':'sum'
-        }
+        try:
+            agg_atributos = {
+                    'Quantidade de Unidades':'sum',
+                    'Quantidade de Unidades Condominiais':'sum',
+                    'Tamanho Médio da Unidade Condominial':'mean',
+                    'Tamanho médio dos Terrenos':'mean',
+                    'Área Total dos lotes':'sum',
+                    'Área Total Ocupada':'sum',
+                    'Área Total Construída':'sum',
+                    'Valor Total dos Terrenos':'sum',
+                    'Valor Total das Construções':'sum',
+                    'CA médio':'mean',
+                    'TO médio':'mean',
+                    'CA médio em lotes condominiais':'mean',
+                    'TO médio em lotes condominiais':'mean',
+                    'CA médio em lotes não condominiais':'mean',
+                    'TO médio em lotes não condominiais':'mean',
+                    'Comprimento Médio da Testada':'mean',
+                    'Número médio de Pavimentos':'mean',
+                    'Fator de obsolecência médio':'mean',
+                    'Residencial vertical Baixo (m2)':'sum',
+                    'Residencial vertical Médio (m2)':'sum',
+                    'Residencial vertical Alto (m2)':'sum',
+                    'Residencial horizontal Baixo (m2)':'sum',
+                    'Residencial horizontal Médio (m2)':'sum',
+                    'Residencial horizontal Alto (m2)':'sum',
+                    'Comercial vertical Baixo (m2)':'sum',
+                    'Comercial vertical Médio (m2)':'sum',
+                    'Comercial vertical Alto (m2)':'sum',
+                    'Comercial horizontal Baixo (m2)':'sum',
+                    'Comercial horizontal Alto (m2)':'sum',
+                    'Comercial horizontal Médio (m2)':'sum',
+                    'Terreno (m2)':'sum',
+                    'Outros Usos (m2)':'sum',
+                    'Residencial vertical Baixo (qt)':'sum',
+                    'Residencial vertical Médio (qt)':'sum',
+                    'Residencial vertical Alto (qt)':'sum',
+                    'Residencial horizontal Baixo (qt)':'sum',
+                    'Residencial horizontal Médio (qt)':'sum',
+                    'Residencial horizontal Alto (qt)':'sum',
+                    'Comercial vertical Baixo (qt)':'sum',
+                    'Comercial vertical Médio (qt)':'sum',
+                    'Comercial vertical Alto (qt)':'sum',
+                    'Comercial horizontal Baixo (qt)':'sum',
+                    'Comercial horizontal Alto (qt)':'sum',
+                    'Comercial horizontal Médio (qt)':'sum',
+                    'Terreno (qt)':'sum',
+                    'Outros Usos (qt)':'sum'
+            }
 
-        # print('lotes')
-        
-        # Abrindo Arquivo de lotes
-        path = f'lotes_agregados_por_ano/{ano[-1]}/SIRGAS_SHP_LOTES_{distrito.ds_codigo.rjust(2, "0")}_{distrito.ds_nome.replace(" ", "_")}_IPTU_{ano[-1]}.gpkg'
-        gdf_lote = gpd.read_file(path).drop_duplicates(subset=['sqlc']).set_index('sqlc')
-        gdf_lote.to_crs(epsg=4674, inplace=True)
-        gdf_lote = gdf_lote[gdf_lote.is_valid]
+            # print('lotes')
+            
+            # Abrindo Arquivo de lotes
+            path = f'lotes_agregados_por_ano/{ano[-1]}/SIRGAS_SHP_LOTES_{distrito.ds_codigo.rjust(2, "0")}_{distrito.ds_nome.replace(" ", "_")}_IPTU_{ano[-1]}.gpkg'
+            gdf_lote = gpd.read_file(path).drop_duplicates(subset=['sqlc']).set_index('sqlc')
+            gdf_lote.to_crs(epsg=4674, inplace=True)
+            gdf_lote = gdf_lote[gdf_lote.is_valid]
 
-        # Abrindo arquivo com os dados agregados de IPTU por lote (SQLC)
-        df_iptu = vaex.open(f'data/por_distritos/IPTU-1995-{EXERCICIO}-agrupados-por-sqlc-{distrito.ds_codigo}-{distrito.ds_nome.replace(" ", "-").lower()}.hdf5').to_pandas_df().set_index('sqlc')
+            # Abrindo arquivo com os dados agregados de IPTU por lote (SQLC)
+            df_iptu = read_vaex_hdf5(f'data/por_distritos/IPTU-1995-{EXERCICIO}-agrupados-por-sqlc-{distrito.ds_codigo}-{distrito.ds_nome.replace(" ", "-").lower()}.hdf5').set_index('sqlc')
 
-        if tab != "diferenca":
-            df_iptu = df_iptu[df_iptu.ano == ano[-1]]#[[atributo]]
-            lotes_existentes = gdf_lote.join(df_iptu, how='inner')
-            lotes_sg = df_iptu.join(gdf_lote, how='left').sq.isna()
-            df_lotes_sg = df_iptu[lotes_sg].reset_index()
-            df_lotes_sg.sqlc = df_lotes_sg.sqlc.str[:6] + '000000'
-            df_lotes_sg_group = df_lotes_sg.groupby('sqlc').agg(agg_atributos)
-            lotes_agregados = gdf_lote.join(df_lotes_sg_group, how='inner')
-            lotes = pd.concat([lotes_existentes, lotes_agregados])
+            if tab != "diferenca":
+                df_iptu = df_iptu[df_iptu.ano == ano[-1]]#[[atributo]]
+                lotes_existentes = gdf_lote.join(df_iptu, how='inner')
+                lotes_sg = df_iptu.join(gdf_lote, how='left').sq.isna()
+                df_lotes_sg = df_iptu[lotes_sg].reset_index()
+                df_lotes_sg.sqlc = df_lotes_sg.sqlc.str[:6] + '000000'
+                df_lotes_sg_group = df_lotes_sg.groupby('sqlc').agg(agg_atributos)
+                lotes_agregados = gdf_lote.join(df_lotes_sg_group, how='inner')
+                lotes = pd.concat([lotes_existentes, lotes_agregados])
 
-            # return dict(content=lotes.to_json(), 
-            #         filename=f"IPTU-SP-todos-atributos-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
-            return dcc.send_bytes(lotes.to_file, f"IPTU-SP-todos-atributos-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
-        else:
-            df_iptu = df_iptu[(df_iptu.ano >= ano[0]) & (df_iptu.ano <= ano[-1])][['ano', atributo]].reset_index().pivot(index='sqlc', columns='ano', values=atributo)
-            lotes_existentes = gdf_lote.join(df_iptu, how='inner')
-            lotes_sg = df_iptu.join(gdf_lote, how='left').sq.isna()
-            df_lotes_sg = df_iptu[lotes_sg].reset_index()
-            df_lotes_sg.sqlc = df_lotes_sg.sqlc.str[:6] + '000000'
-            df_lotes_sg_group = df_lotes_sg.groupby('sqlc').agg(agg_atributos[atributo])
-            # Agora com as geometrias
-            lotes_agregados = gdf_lote.join(df_lotes_sg_group, how='inner')
-            lotes = pd.concat([lotes_existentes, lotes_agregados])
+                # return dict(content=lotes.to_json(), 
+                #         filename=f"IPTU-SP-todos-atributos-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
+                return dcc.send_bytes(lotes.to_file, f"IPTU-SP-todos-atributos-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
+            else:
+                df_iptu = df_iptu[(df_iptu.ano >= ano[0]) & (df_iptu.ano <= ano[-1])][['ano', atributo]].reset_index().pivot(index='sqlc', columns='ano', values=atributo)
+                lotes_existentes = gdf_lote.join(df_iptu, how='inner')
+                lotes_sg = df_iptu.join(gdf_lote, how='left').sq.isna()
+                df_lotes_sg = df_iptu[lotes_sg].reset_index()
+                df_lotes_sg.sqlc = df_lotes_sg.sqlc.str[:6] + '000000'
+                df_lotes_sg_group = df_lotes_sg.groupby('sqlc').agg(agg_atributos[atributo])
+                # Agora com as geometrias
+                lotes_agregados = gdf_lote.join(df_lotes_sg_group, how='inner')
+                lotes = pd.concat([lotes_existentes, lotes_agregados])
 
-            # return dict(content=lotes.to_json(), 
-            #         filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
-            return dcc.send_bytes(lotes.to_file, f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None            
+                # return dict(content=lotes.to_json(), 
+                #         filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
+                return dcc.send_bytes(lotes.to_file, f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
+        except FileNotFoundError as e:
+            # Lotes data files not available
+            return None, None
 
 @app.callback(
     Output("offcanvas", "is_open"),
@@ -859,7 +871,7 @@ def toggle_modal(n1, n2, is_open):
 #     return False
 
 if __name__ == '__main__':
-    # app.run_server(debug=True)
-    # app.run_server(debug=True, host='0.0.0.0', ssl_context='adhoc')
-    app.run_server(debug=True, host='0.0.0.0')
+    # app.run(debug=True)
+    # app.run(debug=True, host='0.0.0.0', ssl_context='adhoc')
+    app.run(debug=True, host='0.0.0.0')
     
