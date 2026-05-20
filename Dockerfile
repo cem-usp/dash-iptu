@@ -1,4 +1,4 @@
-FROM python:3.9-buster
+FROM python:3.13-bookworm
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 EXPOSE 8050
