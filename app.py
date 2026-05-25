@@ -3,10 +3,6 @@
 
 # from cgitb import enable
 # from faulthandler import disable
-from cgitb import enable
-from email import header
-from faulthandler import disable
-from certifi import contents
 import geopandas as gpd
 import pandas as pd
 from dash import Dash, html, dcc, Input, Output, State, dash_table, callback_context
@@ -15,6 +11,29 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import vaex
 import os
+import tempfile
+
+
+def gdf_to_bytes(gdf, driver='GPKG'):
+    """Convert GeoDataFrame to bytes using a temporary file.
+    
+    Workaround for pyogrio incompatibility with Python 3.12 when writing to BytesIO.
+    Also handles integer column names by converting them to strings.
+    """
+    # Create a copy and convert all column names to strings (pyogrio issue with integer columns)
+    gdf_copy = gdf.copy()
+    gdf_copy.columns = [str(col) for col in gdf_copy.columns]
+    
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.gpkg') as tmp:
+        tmp_path = tmp.name
+    
+    try:
+        gdf_copy.to_file(tmp_path, driver=driver)
+        with open(tmp_path, 'rb') as f:
+            return f.read()
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
 
 EXERCICIO = 2024
 
@@ -366,7 +385,7 @@ app.layout = dbc.Container(
 
                         Portanto, essa ferramenta surge a partir do acordo de cooperação técnica entre o Centro de Estudos da Metrópole (CEM) e a Secretaria Municipal de Urbanismo e Licensiamento (SMUL), com a intenção de disseminar e facilitar o acesso a esse conjunto de dados muito importante para entender as dinâmicas de uso e ocupação na cidade de São Paulo.
 
-                        Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu]). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no (GitHub do Painel de Dados da Cidade)[https://github.com/cem-usp/dash-iptu]
+                        Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu](https://github.com/cem-usp/dash-iptu)). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no [GitHub do Painel de Dados da Cidade](https://github.com/cem-usp/dash-iptu)
 
 
                         '''),
@@ -384,7 +403,7 @@ app.layout = dbc.Container(
 
                 #         Portanto, essa ferramenta surge a partir do acordo de cooperação técnica entre o Centro de Estudos da Metrópole (CEM) e a Secretaria Municipal de Urbanismo e Licensiamento (SMUL), com a intenção de disseminar e facilitar o acesso a esse conjunto de dados muito importante para entender as dinâmicas de uso e ocupação na cidade de São Paulo.
 
-                #         Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu]). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no (GitHub do Painel de Dados da Cidade)[https://github.com/cem-usp/dash-iptu]
+                #         Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu](https://github.com/cem-usp/dash-iptu)). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no [GitHub do Painel de Dados da Cidade](https://github.com/cem-usp/dash-iptu)
 
 
                 #         '''),
@@ -692,12 +711,12 @@ def func(n_clicks, atributo, ano, agregacao, tab):
     if tab != "diferenca":
         # return dict(content=sel_agregacao(agregacao, ano, atributo)[7].to_json(), 
                     # filename=f"IPTU-SP-todos-atributos-{ano[-1]}-por-{agregacao}.geojson")
-        return dcc.send_bytes(sel_agregacao(agregacao, ano, atributo)[7].to_file, f"IPTU-SP-todos-atributos-{ano[-1]}-por-{agregacao}.gpkg", driver='GPKG')
+        return dcc.send_bytes(gdf_to_bytes(sel_agregacao(agregacao, ano, atributo)[7]), f"IPTU-SP-todos-atributos-{ano[-1]}-por-{agregacao}.gpkg")
 
     else:
         # return dict(content=sel_agregacao(agregacao, ano, atributo)[5].to_json(), 
         #             filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-{agregacao}.geojson")
-        return dcc.send_bytes(sel_agregacao(agregacao, ano, atributo)[8].to_file, f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-{agregacao}.gpkg", driver='GPKG')
+        return dcc.send_bytes(gdf_to_bytes(sel_agregacao(agregacao, ano, atributo)[8]), f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-{agregacao}.gpkg")
     
 ## Download dados agregados por quadra
 @app.callback(
@@ -727,14 +746,14 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
 
             # return dict(content=quadras.to_json(), 
             #         filename=f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
-            return dcc.send_bytes(quadras.to_file, f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
+            return dcc.send_bytes(gdf_to_bytes(quadras), f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg"), None
         else:
             quadras = quadras.set_index('sq').join(df_iptu_sq[(df_iptu_sq.ano >= ano[0]) & (df_iptu_sq.ano <= ano[-1])][['sq', 'ano', atributo]].to_pandas_df().pivot(index='sq', columns='ano', values=atributo))
             # quadras.set_crs(epsg=31983, inplace=True)
 
             # return dict(content=quadras.to_json(), 
             #             filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
-            return dcc.send_bytes(quadras.to_file, f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
+            return dcc.send_bytes(gdf_to_bytes(quadras), f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg"), None
         
     if 'download-button-lotes' in changed_id:
 
@@ -810,7 +829,7 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
 
             # return dict(content=lotes.to_json(), 
             #         filename=f"IPTU-SP-todos-atributos-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
-            return dcc.send_bytes(lotes.to_file, f"IPTU-SP-todos-atributos-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
+            return dcc.send_bytes(gdf_to_bytes(lotes), f"IPTU-SP-todos-atributos-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg"), None
         else:
             df_iptu = df_iptu[(df_iptu.ano >= ano[0]) & (df_iptu.ano <= ano[-1])][['ano', atributo]].reset_index().pivot(index='sqlc', columns='ano', values=atributo)
             lotes_existentes = gdf_lote.join(df_iptu, how='inner')
@@ -824,7 +843,7 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
 
             # return dict(content=lotes.to_json(), 
             #         filename=f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.geojson"), None
-            return dcc.send_bytes(lotes.to_file, f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None            
+            return dcc.send_bytes(gdf_to_bytes(lotes), f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[-1]}-por-lotes-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg"), None
 
 @app.callback(
     Output("offcanvas", "is_open"),
@@ -861,5 +880,5 @@ def toggle_modal(n1, n2, is_open):
 if __name__ == '__main__':
     # app.run_server(debug=True)
     # app.run_server(debug=True, host='0.0.0.0', ssl_context='adhoc')
-    app.run_server(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')
     
