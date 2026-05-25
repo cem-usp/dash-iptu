@@ -366,7 +366,7 @@ app.layout = dbc.Container(
 
                         Portanto, essa ferramenta surge a partir do acordo de cooperação técnica entre o Centro de Estudos da Metrópole (CEM) e a Secretaria Municipal de Urbanismo e Licensiamento (SMUL), com a intenção de disseminar e facilitar o acesso a esse conjunto de dados muito importante para entender as dinâmicas de uso e ocupação na cidade de São Paulo.
 
-                        Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu]). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no (GitHub do Painel de Dados da Cidade)[https://github.com/cem-usp/dash-iptu]
+                        Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu](https://github.com/cem-usp/dash-iptu)). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no [GitHub do Painel de Dados da Cidade](https://github.com/cem-usp/dash-iptu)
 
 
                         '''),
@@ -384,7 +384,7 @@ app.layout = dbc.Container(
 
                 #         Portanto, essa ferramenta surge a partir do acordo de cooperação técnica entre o Centro de Estudos da Metrópole (CEM) e a Secretaria Municipal de Urbanismo e Licensiamento (SMUL), com a intenção de disseminar e facilitar o acesso a esse conjunto de dados muito importante para entender as dinâmicas de uso e ocupação na cidade de São Paulo.
 
-                #         Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu]). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no (GitHub do Painel de Dados da Cidade)[https://github.com/cem-usp/dash-iptu]
+                #         Essa ferramenta foi elaborada somente a partir de dados abertos, disponíveis a qualquer pessoa e utilizando apenas bibliotecas e softwares livres. Como não poderia deixar de ser diferente, todo o processo de desenvolvimento e código está disponível para download, melhorias e contribuições ([https://github.com/cem-usp/dash-iptu](https://github.com/cem-usp/dash-iptu)). Sobretudo, como é uma ferramenta em pleno desenvolvimento as interações são bem vindas, assim como comentários, sugestões, inconsistências que podem ser reportadas abrindo `issue` no [GitHub do Painel de Dados da Cidade](https://github.com/cem-usp/dash-iptu)
 
 
                 #         '''),
