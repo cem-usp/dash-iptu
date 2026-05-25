@@ -27,6 +27,11 @@ def read_vaex_hdf5(filepath):
             col_group = columns_group[col]
             data[col] = col_group['data'][:]
         
+        # Ensure all columns have the same length
+        if data:
+            min_length = min(len(arr) for arr in data.values())
+            data = {col: arr[:min_length] for col, arr in data.items()}
+        
         return pd.DataFrame(data)
 
 EXERCICIO = 2024
@@ -735,10 +740,10 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
 
     if 'download-button-quadra' in changed_id:    
         if tab != "diferenca":
-            quadras = quadras.set_index('sq').join(df_iptu_sq[df_iptu_sq.ano == int(ano[-1])].to_pandas_df().set_index('sq'))
+            quadras = quadras.set_index('sq').join(df_iptu_sq[df_iptu_sq.ano == int(ano[-1])].set_index('sq'))
             return dcc.send_bytes(quadras.to_file, f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
         else:
-            quadras = quadras.set_index('sq').join(df_iptu_sq[(df_iptu_sq.ano >= ano[0]) & (df_iptu_sq.ano <= ano[-1])][['sq', 'ano', atributo]].to_pandas_df().pivot(index='sq', columns='ano', values=atributo))
+            quadras = quadras.set_index('sq').join(df_iptu_sq[(df_iptu_sq.ano >= ano[0]) & (df_iptu_sq.ano <= ano[-1])][['sq', 'ano', atributo]].pivot(index='sq', columns='ano', values=atributo))
             return dcc.send_bytes(quadras.to_file, f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
         
     if 'download-button-lotes' in changed_id:
