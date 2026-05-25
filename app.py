@@ -35,8 +35,7 @@ df_iptu_distrito = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-dis
 df_iptu_subprefeitura = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-subprefeitura.hdf5')
 df_iptu_od = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-od.hdf5')
 df_iptu_censo = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-censo.hdf5')
-# df_iptu_sq is not available - file doesn't exist
-# df_iptu_sq = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-sq.hdf5')
+df_iptu_sq = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-sq.hdf5')
 df_iptu_macroareas = read_vaex_hdf5(f'data/IPTU-1995-{EXERCICIO}-agrupados-por-macro_area.hdf5')
 
 gdf_distritos = gpd.read_file('data/SIRGAS_GPKG_distrito.gpkg')
@@ -735,14 +734,12 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
 
     if 'download-button-quadra' in changed_id:    
-        # Quadra download functionality disabled - df_iptu_sq file not available
-        # if tab != "diferenca":
-        #     quadras = quadras.set_index('sq').join(df_iptu_sq[df_iptu_sq.ano == int(ano[-1])].to_pandas_df().set_index('sq'))
-        #     return dcc.send_bytes(quadras.to_file, f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
-        # else:
-        #     quadras = quadras.set_index('sq').join(df_iptu_sq[(df_iptu_sq.ano >= ano[0]) & (df_iptu_sq.ano <= ano[-1])][['sq', 'ano', atributo]].to_pandas_df().pivot(index='sq', columns='ano', values=atributo))
-        #     return dcc.send_bytes(quadras.to_file, f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
-        return None, None
+        if tab != "diferenca":
+            quadras = quadras.set_index('sq').join(df_iptu_sq[df_iptu_sq.ano == int(ano[-1])].to_pandas_df().set_index('sq'))
+            return dcc.send_bytes(quadras.to_file, f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
+        else:
+            quadras = quadras.set_index('sq').join(df_iptu_sq[(df_iptu_sq.ano >= ano[0]) & (df_iptu_sq.ano <= ano[-1])][['sq', 'ano', atributo]].to_pandas_df().pivot(index='sq', columns='ano', values=atributo))
+            return dcc.send_bytes(quadras.to_file, f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
         
     if 'download-button-lotes' in changed_id:
 
