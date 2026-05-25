@@ -41,6 +41,22 @@ docker build -t dash-iptu .
 docker run -p 8050:8050 -v /home/ubuntu/dash-iptu:/opt/app -d dash-iptu
 ```
 
+## Máquina Virtual
+
+Para subir uma versão do Dash na máquina virtual, rode o seguinte comando no Git Bash, no caminho C:\Users\9837292\Documents\GitHub:
+
+```
+scp -r -P [Porta para acesso SSH] dash-iptu ubuntu@[Endereço IP da VM]:~
+```
+
+Depois, acesse a VM:
+
+```
+ssh ubuntu@[Endereço IP da VM] -p [Porta para acesso SSH]
+```
+
+E rode os comandos para subir o container Docker
+
 ## Resultados
 
 Ambiente de testes disponível em [https://dashiptu.centrodametropole.fflch.usp.br]
