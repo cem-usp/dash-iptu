@@ -25,14 +25,44 @@ def read_vaex_hdf5(filepath):
         data = {}
         for col in column_order:
             col_group = columns_group[col]
-            data[col] = col_group['data'][:]
+            col_data = col_group['data'][:]
+            data[col] = col_data
         
         # Ensure all columns have the same length
         if data:
             min_length = min(len(arr) for arr in data.values())
             data = {col: arr[:min_length] for col, arr in data.items()}
         
-        return pd.DataFrame(data)
+        df = pd.DataFrame(data)
+        
+        # Fix sqlc column: it's stored as individual 1-byte characters, one digit per row
+        # We need to group every 12 rows and reconstruct the 12-digit sqlc code
+        if 'sqlc' in df.columns:
+            # Handle both byte strings (kind='S') and object dtype
+            if df['sqlc'].dtype.kind == 'S' or df['sqlc'].dtype.kind == 'O':
+                # Handle object dtype (individual characters as strings)
+                if df['sqlc'].dtype.kind == 'O':
+                    # Convert object dtype to strings if needed
+                    sqlc_chars = df['sqlc'].astype(str).values
+                    # Remove "b'" prefix if present
+                    sqlc_chars = [str(v).replace("b'", "").replace("'", "") for v in sqlc_chars]
+                else:
+                    # Handle byte strings |S1
+                    sqlc_bytes = df['sqlc'].values
+                    sqlc_chars = [v.decode() if isinstance(v, bytes) else str(v) for v in sqlc_bytes]
+                
+                # Reshape into (n_properties, 12) and join each row
+                n_full_codes = len(sqlc_chars) // 12
+                sqlc_codes = []
+                for i in range(n_full_codes):
+                    code = ''.join(sqlc_chars[i*12:(i+1)*12])
+                    sqlc_codes.append(code)
+                
+                # Truncate other columns to match the number of complete sqlc codes
+                df = df.iloc[:n_full_codes].reset_index(drop=True)
+                df['sqlc'] = sqlc_codes
+        
+        return df
 
 EXERCICIO = 2024
 
@@ -743,7 +773,10 @@ def func(quadra, lotes, atributo, ano, agregacao, tab, download_por_lotes):
             quadras = quadras.set_index('sq').join(df_iptu_sq[df_iptu_sq.ano == int(ano[-1])].set_index('sq'))
             return dcc.send_bytes(quadras.to_file, f"IPTU-SP-todos-atributos-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
         else:
-            quadras = quadras.set_index('sq').join(df_iptu_sq[(df_iptu_sq.ano >= ano[0]) & (df_iptu_sq.ano <= ano[-1])][['sq', 'ano', atributo]].pivot(index='sq', columns='ano', values=atributo))
+            df_filtered = df_iptu_sq[(df_iptu_sq.ano >= ano[0]) & (df_iptu_sq.ano <= ano[-1])][['sq', 'ano', atributo]].groupby(['sq', 'ano']).agg({atributo: 'sum'}).reset_index()
+            pivoted = df_filtered.pivot(index='sq', columns='ano', values=atributo)
+            pivoted.columns = pivoted.columns.astype(str)
+            quadras = quadras.set_index('sq').join(pivoted)
             return dcc.send_bytes(quadras.to_file, f"IPTU-SP-diferenca-de-{atributo.replace(' ','-')}-{ano[0]}-ate-{ano[-1]}-por-quadras-{download_por_lotes}-{distrito.ds_nome.lower().replace(' ', '-')}.gpkg", driver='GPKG'), None
         
     if 'download-button-lotes' in changed_id:
