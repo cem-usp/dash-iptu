@@ -38,7 +38,7 @@ Para subir uma versão do Dash utilize o Docker:
 
 ```
 docker build -t dash-iptu .
-docker run -p 8050:8050 -v /home/ubuntu/dash-iptu:/opt/app -d dash-iptu
+docker run -p 8050:8050 -v /home/ubuntu/dash-iptu:/opt/app -d --restart unless-stopped --name dash-iptu dash-iptu
 ```
 
 ## Máquina Virtual
